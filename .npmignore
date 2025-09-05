@@ -1,0 +1,12 @@
+.npmrc
+package-lock.json
+pnpm-lock.yaml
+Jenkinsfile
+*.log
+LICENSE
+src/__tests__
+dist/__tests__
+__tests__
+.test.ts
+.test.jsdocs/
+docs/

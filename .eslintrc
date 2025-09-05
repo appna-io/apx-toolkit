@@ -1,0 +1,43 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "import"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:apx-eslint/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      },
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "react/jsx-indent-props": "off",
+    "react/jsx-indent": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-closing-tag-location": "off"
+  }
+}
