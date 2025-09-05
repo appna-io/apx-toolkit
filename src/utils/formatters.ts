@@ -89,27 +89,6 @@ export const formatNumber = (
     }
 };
 
-/**
- * Format credit card number with masking
- */
-export const formatCreditCard = (cardNumber: string, mask: boolean = true): string => {
-    if (!cardNumber || typeof cardNumber !== 'string') return '';
-  
-    const cleaned = cardNumber.replace(/\D/g, '');
-  
-    if (mask) {
-        if (cleaned.length >= 4) {
-            const lastFour = cleaned.slice(-4);
-            const masked = '*'.repeat(cleaned.length - 4);
-            return `${masked}${lastFour}`;
-        }
-        return '*'.repeat(cleaned.length);
-    }
-  
-    // Format without masking
-    const groups = cleaned.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : cleaned;
-};
 
 /**
  * Format social security number with masking

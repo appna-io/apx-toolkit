@@ -8,6 +8,40 @@
 A modern utility SDK for frontend web applications.  
 Includes regex-based validators, generic helpers, formatting utilities, date tools, magic constants, phone number formatting, scroll utilities, storage persister, and more.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+  - [Installation](#1-installation)
+  - [Initialize Context](#2-initialize-context-recommended)
+  - [Basic Usage](#3-basic-usage)
+  - [Running Examples](#4-running-examples)
+- [What's Included?](#whats-included)
+  - [Validators (Regex-based)](#validators-regex-based)
+  - [Date & Time Utilities](#date--time-utilities)
+  - [Currency & Number Formatters](#currency--number-formatters)
+  - [Phone Number Formatting](#phone-number-formatting)
+  - [Context System (Global Configuration)](#context-system-global-configuration)
+  - [I18N Formatters (Internationalization)](#i18n-formatters-internationalization)
+  - [Constants](#constants)
+  - [Regex Patterns](#regex-patterns)
+  - [Generic Helpers](#generic-helpers)
+  - [Scroll Utilities](#scroll-utilities)
+  - [Credit Card Utilities](#credit-card-utilities)
+  - [Opening Hours Formatter](#opening-hours-formatter)
+  - [Storage Persister](#storage-persister)
+- [Directory Structure](#directory-structure)
+- [Usage Examples](#usage-examples)
+  - [Validation](#validation)
+  - [Formatting](#formatting)
+  - [Date Utilities](#date-utilities)
+  - [Generic Helpers](#generic-helpers-1)
+  - [Constants](#constants-1)
+  - [Scroll Utilities](#scroll-utilities-1)
+  - [Storage Persister](#storage-persister-1)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+
 ---
 
 ## Getting Started
@@ -92,6 +126,7 @@ npx ts-node examples/real-world-usage.ts
 - `comprehensive-formatters-demo.ts` - All formatting functions with examples
 - `comprehensive-date-utilities-demo.ts` - All date utilities with examples
 - `comprehensive-generic-utilities-demo.ts` - All generic helper functions with examples
+- `credit-card-demo.ts` - Credit card utilities with formatting, validation, and dummy generation
 - `opening-hours-demo.ts` - Opening hours formatting with multi-language support
 - `phone-formatting-examples.ts` - Phone number formatting patterns
 - `phone-number-demo.ts` - Phone number utility demo
@@ -688,6 +723,142 @@ interface ScrollOptions {
   easing?: 'linear' | 'easeInOut' | 'easeIn' | 'easeOut'
   target?: Window | Element
 }
+```
+
+### Credit Card Utilities
+
+```ts
+// Credit card formatting
+formatCreditCard(cardNumber: string, options?: CreditCardFormatOptions): string
+getCreditCardType(cardNumber: string): CreditCardType | null
+getLast4Digits(cardNumber: string): string
+maskCreditCard(cardNumber: string, maskChar?: string): string
+
+// Credit card validation
+isValidCreditCardNumber(cardNumber: string): boolean
+
+// Dummy card generation
+getRandomDummyCreditCard(type?: CreditCardType): string
+
+// Credit card information
+getCreditCardInfo(cardNumber: string, options?: CreditCardFormatOptions): CreditCardInfo
+getAvailableCreditCardTypes(): Array<{ type: CreditCardType; name: string; format: string }>
+
+// Types
+type CreditCardType = 'VISA' | 'MASTERCARD' | 'AMERICAN_EXPRESS' | 'DISCOVER' | 'DINERS_CLUB' | 'JCB' | 'UNIONPAY'
+type CreditCardFormatOptions = {
+  mask?: boolean
+  format?: string
+  maskChar?: string
+}
+type CreditCardInfo = {
+  type: CreditCardType | null
+  typeName: string | null
+  number: string
+  formatted: string
+  last4: string
+  isValid: boolean
+  length: number
+}
+```
+
+**Comprehensive Examples:**
+```ts
+// Basic formatting
+formatCreditCard('4111111111111111'); // '4111 1111 1111 1111'
+
+// Custom format with placeholders
+formatCreditCard('4111111111111111', { 
+  format: 'AAAA-BBBB-CCCC-DDDD' 
+}); // '4111-1111-1111-1111'
+
+// Masked formatting
+formatCreditCard('4111111111111111', { 
+  mask: true 
+}); // '************1111'
+
+// Custom mask character
+formatCreditCard('4111111111111111', { 
+  mask: true, 
+  maskChar: 'X' 
+}); // 'XXXXXXXXXXXX1111'
+
+// Credit card type detection
+getCreditCardType('4111111111111111'); // 'VISA'
+getCreditCardType('5555555555554444'); // 'MASTERCARD'
+
+// Last 4 digits
+getLast4Digits('4111111111111111'); // '1111'
+
+// Validation
+isValidCreditCardNumber('4111111111111111'); // true
+isValidCreditCardNumber('1234567890123456'); // false
+
+// Dummy card generation
+getRandomDummyCreditCard('VISA'); // '4111111111111111'
+getRandomDummyCreditCard(); // Random card of any type
+
+// Complete card information
+const info = getCreditCardInfo('4111111111111111');
+console.log(info);
+// {
+//   type: 'VISA',
+//   typeName: 'Visa',
+//   number: '4111111111111111',
+//   formatted: '4111 1111 1111 1111',
+//   last4: '1111',
+//   isValid: true,
+//   length: 16
+// }
+```
+
+**Supported Credit Card Types:**
+- **Visa**: 4xxx (13, 16, 19 digits)
+- **MasterCard**: 5xxx (16 digits)
+- **American Express**: 3x (15 digits)
+- **Discover**: 6xxx (16 digits)
+- **Diners Club**: 3xxx (14 digits)
+- **JCB**: 3xxx (15, 16 digits)
+- **UnionPay**: 62xx (16-19 digits)
+
+**Real-World Usage:**
+```ts
+// Payment form validation
+const validatePaymentForm = (cardNumber: string) => {
+  const info = getCreditCardInfo(cardNumber);
+  
+  if (!info.isValid) {
+    return { valid: false, error: 'Invalid credit card number' };
+  }
+  
+  return {
+    valid: true,
+    type: info.typeName,
+    last4: info.last4,
+    formatted: info.formatted
+  };
+};
+
+// Display saved cards
+const displaySavedCards = (cards: string[]) => {
+  return cards.map(card => {
+    const info = getCreditCardInfo(card);
+    return {
+      type: info.typeName,
+      last4: info.last4,
+      masked: maskCreditCard(card)
+    };
+  });
+};
+
+// Test card generation for development
+const generateTestCards = () => {
+  return {
+    visa: getRandomDummyCreditCard('VISA'),
+    mastercard: getRandomDummyCreditCard('MASTERCARD'),
+    amex: getRandomDummyCreditCard('AMERICAN_EXPRESS')
+  };
+};
 ```
 
 ### Opening Hours Formatter

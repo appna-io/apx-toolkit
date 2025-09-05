@@ -37,5 +37,8 @@ export * from './utils/generic';
 // Export scroll utilities
 export * from './utils/scrollUtils'; 
 
+// Export credit card utilities
+export * from './utils/creditCard';
+
 // Export types
 export * from './common-types';
