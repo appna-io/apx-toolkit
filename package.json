@@ -1,6 +1,6 @@
 {
   "name": "@apx-ui/toolkit",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "description": "Universal Web Utility SDK for apx-ui (AppNA UX/UI) frontend applications",
   "main": "dist/index.js",
