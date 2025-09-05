@@ -4,7 +4,6 @@ import { formatPhoneNumber, COUNTRY_CODES } from '../src/utils/phoneNumber';
  * Comprehensive Phone Number Formatting Examples
  * 
  * This demo showcases the new custom phone number formatting utility
- * that replaced libphonenumber-js with a lightweight, zero-dependency solution.
  */
 
 console.log('📞 Phone Number Formatting Examples\n');
@@ -253,23 +252,3 @@ console.log('✅ Flexible padding options');
 console.log('✅ Error handling for edge cases');
 console.log('✅ Pure string manipulation (no regex overhead)');
 
-/**
- * Example 10: Migration from libphonenumber-js
- */
-console.log('\n=== 10. Migration from libphonenumber-js ===');
-console.log('Old (libphonenumber-js):');
-console.log('  import { formatPhoneNumber } from "libphonenumber-js";');
-console.log('  formatPhoneNumber("+12345678901", "NATIONAL")');
-console.log('');
-console.log('New (@apx-ui/toolkit):');
-console.log('  import { formatPhoneNumber } from "@apx-ui/toolkit";');
-console.log('  formatPhoneNumber("+12345678901", "+C (PPP)-EEE-SSSS")');
-console.log('');
-console.log('Benefits of migration:');
-console.log('  - Reduced bundle size');
-console.log('  - No external dependencies');
-console.log('  - More control over formatting');
-console.log('  - Better TypeScript support');
-console.log('  - Customizable behavior');
-
-console.log('\n=== Phone Number Formatting Examples Complete ===');

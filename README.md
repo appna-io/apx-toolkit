@@ -1,5 +1,10 @@
 # @apx-ui/toolkit
 
+[![Apx Toolkit](https://img.shields.io/badge/apx-toolkit-blue.svg)](https://github.com/appna-io/apx-toolkit)
+[![AppNA.io](https://img.shields.io/badge/appna-io--X-orange.svg)](https://appna.io)
+[![apx-ui](https://img.shields.io/badge/tag-apx--ui-purple.svg)](https://github.com/appna-io/apx-toolkit)
+[![apx-ui](https://img.shields.io/badge/tag-AllInOne--Utility-purple.svg)](https://github.com/appna-io/apx-toolkit)
+
 A modern utility SDK for frontend web applications.  
 Includes regex-based validators, generic helpers, formatting utilities, date tools, magic constants, phone number formatting, scroll utilities, storage persister, and more.
 
@@ -83,7 +88,13 @@ npx ts-node examples/real-world-usage.ts
 
 **Available Examples:**
 - `basic-usage.ts` - Core utilities overview
+- `comprehensive-validators-demo.ts` - All validation functions with examples
+- `comprehensive-formatters-demo.ts` - All formatting functions with examples
+- `comprehensive-date-utilities-demo.ts` - All date utilities with examples
+- `comprehensive-generic-utilities-demo.ts` - All generic helper functions with examples
+- `opening-hours-demo.ts` - Opening hours formatting with multi-language support
 - `phone-formatting-examples.ts` - Phone number formatting patterns
+- `phone-number-demo.ts` - Phone number utility demo
 - `scroll-utilities-demo.ts` - Smooth scrolling utilities
 - `persister-demo.ts` - Storage with TTL functionality
 - `real-world-usage.ts` - Production-ready patterns
@@ -119,6 +130,77 @@ isDomain(value: string): boolean
 isUsername(value: string): boolean
 hasValidFileExtension(value: string): boolean
 validateWithRegex(value: string, pattern: RegexPattern): boolean
+
+// Validation with detailed results
+validateEmail(email: string): ValidationResult
+validatePhone(phone: string): ValidationResult
+validateURL(url: string): ValidationResult
+validatePassword(password: string): ValidationResult
+```
+
+**Comprehensive Examples:**
+```ts
+// Basic validation
+isEmail('user@example.com'); // true
+isPhone('+1234567890'); // true
+isValidURL('https://example.com'); // true
+isStrongPassword('MyPass123!'); // true
+
+// Advanced validation
+isCreditCard('4111111111111111'); // true (Visa)
+isIPv4('192.168.1.1'); // true
+isUUID('550e8400-e29b-41d4-a716-446655440000'); // true
+isHexColor('#FF0000'); // true
+isDomain('example.com'); // true
+
+// Validation with detailed results
+const emailResult = validateEmail('invalid-email');
+console.log(emailResult); // { valid: false, error: 'Invalid email format' }
+
+const passwordResult = validatePassword('weak');
+console.log(passwordResult); // { valid: false, error: 'Password must be at least 8 characters long' }
+
+// Form validation example
+const formData = {
+    email: 'user@example.com',
+    phone: '+1234567890',
+    password: 'MyPass123!',
+    website: 'https://example.com'
+};
+
+const validation = {
+    email: validateEmail(formData.email),
+    phone: validatePhone(formData.phone),
+    password: validatePassword(formData.password),
+    website: validateURL(formData.website)
+};
+
+// Check all validations
+const isFormValid = Object.values(validation).every(result => result.valid);
+```
+
+**Available Regex Patterns:**
+```ts
+REGEX = {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone: /^(\+?\d{1,3})?\d{7,14}$/,
+    numeric: /^\d+$/,
+    alphanumeric: /^[a-zA-Z0-9]+$/,
+    url: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
+    strongPassword: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/,
+    creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3[0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})$/,
+    ipv4: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+    date: /^\d{4}-\d{2}-\d{2}$/,
+    time: /^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/,
+    uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    postalCode: /^\d{5}(-\d{4})?$/,
+    ssn: /^\d{3}-\d{2}-\d{4}$/,
+    currency: /^\$?\d+(\.\d{2})?$/,
+    hexColor: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+    domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/,
+    username: /^[a-zA-Z0-9_]{3,20}$/,
+    fileExtension: /\.(jpg|jpeg|png|gif|pdf|doc|docx|txt|zip|rar)$/i
+}
 ```
 
 ### Date & Time Utilities
@@ -168,6 +250,68 @@ formatDuration(seconds: number): string
 formatRelativeTime(date: Date | string | number): string
 formatOrdinal(num: number): string
 formatBytes(bytes: number, decimals?: number): string
+```
+
+**Comprehensive Examples:**
+```ts
+// Currency formatting
+formatCurrency(1234.56); // $1,234.56
+formatCurrency(1234.56, 'EUR', 'de-DE'); // 1.234,56 €
+formatCurrency(1234.56, 'JPY', 'ja-JP'); // ¥1,235
+
+// Compact number formatting
+formatCompactNumber(1500); // 1.5K
+formatCompactNumber(2000000); // 2.0M
+formatCompactNumber(1500000000); // 1.5B
+
+// File size formatting
+formatFileSize(1024); // 1 KB
+formatFileSize(1048576); // 1 MB
+formatBytes(1024, 2); // 1.00 KB
+
+// Percentage formatting
+formatPercentage(12.5); // 12.50%
+formatPercentage(0.5, 1); // 0.5%
+
+// Personal data formatting
+formatCreditCard('4111111111111111', true); // ************1111
+formatSSN('123456789', true); // ***-**-6789
+formatPostalCode('123456789'); // 12345-6789
+
+// Time formatting
+formatDuration(3661); // 1h 1m 1s
+formatRelativeTime(new Date(Date.now() - 2 * 60 * 60 * 1000)); // 2 hours ago
+formatOrdinal(21); // 21st
+formatOrdinal(22); // 22nd
+
+// Number formatting with options
+formatNumber(1234.56, 'en-US', { 
+    style: 'currency', 
+    currency: 'USD' 
+}); // $1,234.56
+
+formatNumber(0.1234, 'en-US', { 
+    style: 'percent' 
+}); // 12%
+```
+
+**Real-World Usage:**
+```ts
+// E-commerce product display
+const product = {
+    name: 'Premium Headphones',
+    price: 299.99,
+    discount: 15,
+    fileSize: 1048576,
+    rating: 4.5
+};
+
+console.log(`Product: ${product.name}`);
+console.log(`Price: ${formatCurrency(product.price, 'USD')}`);
+console.log(`Discount: ${formatPercentage(product.discount)}`);
+console.log(`Final Price: ${formatCurrency(product.price * (1 - product.discount / 100), 'USD')}`);
+console.log(`File Size: ${formatFileSize(product.fileSize)}`);
+console.log(`Rating: ${formatNumber(product.rating, 'en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/5`);
 ```
 
 ### Phone Number Formatting
@@ -389,8 +533,6 @@ isNull(value: any): value is null
 isUndefined(value: any): value is undefined
 getValueOrFallback<T>(value: T | null | undefined, fallback: T): T
 deepClone<T>(obj: T): T
-merge<T extends object>(...objects: Partial<T>[]): T
-deepMerge<T extends object>(...objects: Partial<T>[]): T
 pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K>
 omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K>
 debounce<T extends (...args: any[]) => any>(func: T, delay: number): (...args: Parameters<T>) => void
@@ -406,6 +548,126 @@ truncate(str: string, length: number, suffix?: string): string
 unique<T>(array: T[]): T[]
 groupBy<T, K extends keyof T>(array: T[], key: K): Record<string, T[]>
 sortBy<T, K extends keyof T>(array: T[], key: K, order?: 'asc' | 'desc'): T[]
+```
+
+**Comprehensive Examples:**
+```ts
+// Type checking
+isEmpty(''); // true
+isEmpty([]); // true
+isEmpty({}); // true
+isEmpty('hello'); // false
+
+isDefined(null); // false
+isDefined(undefined); // false
+isDefined('hello'); // true
+
+isString('hello'); // true
+isNumber(123); // true
+isBoolean(true); // true
+isArray([1, 2, 3]); // true
+isObject({}); // true
+
+// Safe value conversion
+toNumberSafe('123'); // 123
+toNumberSafe('abc', 0); // 0
+toNumberSafe(null, 999); // 999
+
+getValueOrFallback(null, 'default'); // 'default'
+getValueOrFallback('hello', 'default'); // 'hello'
+
+// Object manipulation
+const user = { id: 1, name: 'John', email: 'john@example.com', age: 30 };
+
+const userBasic = pick(user, ['name', 'email']); // { name: 'John', email: 'john@example.com' }
+const userWithoutId = omit(user, ['id', 'age']); // { name: 'John', email: 'john@example.com' }
+
+// Deep cloning
+const original = { user: { name: 'John' }, items: [1, 2, 3] };
+const cloned = deepClone(original);
+cloned.user.name = 'Jane';
+console.log(original.user.name); // 'John' (unchanged)
+
+// String utilities
+capitalize('hello world'); // 'Hello world'
+toCamelCase('hello-world'); // 'helloWorld'
+toKebabCase('helloWorld'); // 'hello-world'
+toSnakeCase('helloWorld'); // 'hello_world'
+toPascalCase('hello world'); // 'HelloWorld'
+truncate('This is a very long string', 20, '...'); // 'This is a very long...'
+
+// Array utilities
+unique([1, 2, 2, 3, 3, 3]); // [1, 2, 3]
+
+const users = [
+    { name: 'John', department: 'Engineering', age: 30 },
+    { name: 'Jane', department: 'Marketing', age: 25 },
+    { name: 'Bob', department: 'Engineering', age: 35 }
+];
+
+groupBy(users, 'department');
+// { Engineering: [{ name: 'John', ... }, { name: 'Bob', ... }], Marketing: [{ name: 'Jane', ... }] }
+
+sortBy(users, 'age'); // Sort by age ascending
+sortBy(users, 'age', 'desc'); // Sort by age descending
+
+// Performance utilities
+const debouncedSearch = debounce((query: string) => {
+    console.log('Searching for:', query);
+}, 300);
+
+const throttledScroll = throttle(() => {
+    console.log('Scroll event');
+}, 100);
+
+// Random utilities
+randomString(10); // 'aB3xY9mK2p'
+randomNumber(1, 100); // Random number between 1 and 100
+```
+
+**Real-World Usage:**
+```ts
+// Form data sanitization
+const sanitizeFormData = (data: any) => {
+    return {
+        name: data.name?.trim() || '',
+        email: data.email?.trim() || '',
+        age: toNumberSafe(data.age, 0),
+        phone: data.phone?.replace(/\D/g, '') || '',
+        bio: truncate(data.bio?.trim() || '', 100, '...')
+    };
+};
+
+// Data processing pipeline
+const processUsers = (users: any[]) => {
+    // Filter out invalid users
+    const validUsers = users.filter(user => 
+        isDefined(user.name) && 
+        isDefined(user.email) && 
+        !isEmpty(user.name)
+    );
+    
+    // Group by department
+    const byDepartment = groupBy(validUsers, 'department');
+    
+    // Sort by name
+    const sorted = sortBy(validUsers, 'name');
+    
+    return { validUsers, byDepartment, sorted };
+};
+
+// API response handling
+const handleApiResponse = (response: any) => {
+    const data = getValueOrFallback(response.data, []);
+    const error = getValueOrFallback(response.error, null);
+    
+    if (isDefined(error)) {
+        console.error('API Error:', error);
+        return [];
+    }
+    
+    return isArray(data) ? data : [];
+};
 ```
 
 ### Scroll Utilities
@@ -426,6 +688,129 @@ interface ScrollOptions {
   easing?: 'linear' | 'easeInOut' | 'easeIn' | 'easeOut'
   target?: Window | Element
 }
+```
+
+### Opening Hours Formatter
+
+```ts
+formatOpeningHours(
+  storeHours: StoreHours,
+  options?: {
+    locale?: string
+    use24Hour?: boolean
+    language?: string
+  }
+): string[]
+
+// Types
+type StoreHours = Array<{
+  open: string | false
+  closed: string | false
+} | Array<{
+  open: string
+  closed: string
+}>>
+```
+
+**Comprehensive Examples:**
+```ts
+// Standard business hours
+const standardHours: StoreHours = [
+    { "closed": false, "open": false }, // Sunday - Closed
+    [{ "closed": "17:00", "open": "09:00" }], // Monday - 9:00-17:00
+    [{ "closed": "17:00", "open": "09:00" }], // Tuesday - 9:00-17:00
+    [{ "closed": "17:00", "open": "09:00" }], // Wednesday - 9:00-17:00
+    [{ "closed": "17:00", "open": "09:00" }], // Thursday - 9:00-17:00
+    [{ "closed": "17:00", "open": "09:00" }], // Friday - 9:00-17:00
+    [{ "closed": "15:00", "open": "09:00" }]  // Saturday - 9:00-15:00
+];
+
+// English with 12-hour format
+const englishHours = formatOpeningHours(standardHours, {
+    locale: 'en-US',
+    use24Hour: false,
+    language: 'en'
+});
+// ['Sunday, Saturday: 9:00 AM - 6:00 PM', 'Monday - Friday: 9:00 AM - 5:00 PM']
+
+// Hebrew with 12-hour format
+const hebrewHours = formatOpeningHours(standardHours, {
+    locale: 'he-IL',
+    use24Hour: false,
+    language: 'he'
+});
+// ['ראשון, שבת: 9:00 AM - 6:00 PM', 'שני - שישי: 9:00 AM - 5:00 PM']
+
+// Arabic with 24-hour format
+const arabicHours = formatOpeningHours(standardHours, {
+    locale: 'ar-SA',
+    use24Hour: true,
+    language: 'ar'
+});
+// ['الأحد, السبت: ٠٩:٠٠ - ١٨:٠٠', 'الاثنين - الجمعة: ٠٩:٠٠ - ١٧:٠٠']
+
+// Restaurant with lunch break
+const restaurantHours: StoreHours = [
+    { "closed": false, "open": false }, // Sunday - Closed
+    [
+        { "closed": "14:00", "open": "11:00" },
+        { "closed": "22:00", "open": "17:00" }
+    ], // Monday - 11:00-14:00, 17:00-22:00
+    // ... similar for other days
+];
+
+const restaurantFormatted = formatOpeningHours(restaurantHours, {
+    locale: 'en-US',
+    use24Hour: false,
+    language: 'en'
+});
+// ['Monday - Saturday: 11:00 AM - 2:00 PM, 5:00 PM - 10:00 PM', 'Sunday: Closed']
+
+// 24/7 Store
+const store24_7: StoreHours = [
+    [{ "closed": "23:59", "open": "00:00" }], // Sunday - 24/7
+    [{ "closed": "23:59", "open": "00:00" }], // Monday - 24/7
+    // ... similar for all days
+];
+
+const store24_7Formatted = formatOpeningHours(store24_7, {
+    locale: 'en-US',
+    use24Hour: true,
+    language: 'en'
+});
+// ['Sunday - Saturday: 00:00 - 23:59']
+```
+
+**Real-World Usage:**
+```ts
+// Business hours display component
+const BusinessHoursDisplay = ({ hours, locale = 'en-US' }: { hours: StoreHours, locale?: string }) => {
+    const formattedHours = formatOpeningHours(hours, {
+        locale,
+        use24Hour: false,
+        language: locale.split('-')[0]
+    });
+    
+    return (
+        <div className="business-hours">
+            <h3>Opening Hours</h3>
+            {formattedHours.map((line, index) => (
+                <p key={index}>{line}</p>
+            ))}
+        </div>
+    );
+};
+
+// Multi-language support
+const getBusinessHours = (language: string) => {
+    const hours = getStoreHours(); // Your business hours data
+    
+    return formatOpeningHours(hours, {
+        locale: `${language}-${getCountryCode(language)}`,
+        use24Hour: language === 'ar' || language === 'he', // Use 24-hour for Arabic/Hebrew
+        language
+    });
+};
 ```
 
 ### Storage Persister
