@@ -1,0 +1,6 @@
+# Check if commit message contains auto version bump and set environment variable
+if grep -q "Auto bump patch version \[ci skip\]" "$1"; then
+  echo "SKIP_HUSKY_CHECKS=true" > .husky/skip-checks.env
+else
+  rm -f .husky/skip-checks.env
+fi

@@ -1,3 +1,9 @@
+# Check if the latest commit message contains auto version bump
+if git log -1 --pretty=%B | grep -q "Auto bump patch version \[ci skip\]"; then
+  echo "🚀 Auto version bump detected, skipping pre-push checks..."
+  exit 0
+fi
+
 echo "🔍 Running pre-push checks..."
 
 echo "📝 Running lint check..."

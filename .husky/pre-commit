@@ -1,2 +1,16 @@
+# Check if commit message contains auto version bump
+# This works by checking if the commit message being written contains the skip pattern
+# We check the commit message file that git creates during the commit process
+if [ -f ".git/COMMIT_EDITMSG" ] && grep -q "Auto bump patch version \[ci skip\]" .git/COMMIT_EDITMSG 2>/dev/null; then
+  echo "🚀 Auto version bump detected, skipping pre-commit checks..."
+  exit 0
+fi
+
+# Also check environment variable for programmatic commits
+if [ "$SKIP_HUSKY_CHECKS" = "true" ]; then
+  echo "🚀 Auto version bump detected, skipping pre-commit checks..."
+  exit 0
+fi
+
 echo "🧪 Running tests before commit..."
 npm test
