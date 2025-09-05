@@ -1,9 +1,10 @@
 # @apx-ui/toolkit
 
 [![Apx Toolkit](https://img.shields.io/badge/apx-toolkit-blue.svg)](https://github.com/appna-io/apx-toolkit)
-[![AppNA.io](https://img.shields.io/badge/appna-io--X-orange.svg)](https://appna.io)
+[![AppNA.io](https://img.shields.io/badge/appna.io--UX/UI-orange.svg)](https://appna.io)
 [![apx-ui](https://img.shields.io/badge/tag-apx--ui-purple.svg)](https://github.com/appna-io/apx-toolkit)
 [![apx-ui](https://img.shields.io/badge/tag-AllInOne--Utility-purple.svg)](https://github.com/appna-io/apx-toolkit)
+[![220 test cases passed](https://img.shields.io/badge/passed-220--Tests-passed--green.svg)](https://github.com/appna-io/apx-toolkit/src/__tests__)
 
 A modern utility SDK for frontend web applications.  
 Includes regex-based validators, generic helpers, formatting utilities, date tools, magic constants, phone number formatting, scroll utilities, storage persister, and more.
