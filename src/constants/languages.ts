@@ -1,4 +1,4 @@
-import { KeyOf } from '../common-types';
+import { KeyOf } from '../common-types/index.js';
 
 /**
  * Common languages with their codes and names

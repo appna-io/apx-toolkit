@@ -1,4 +1,4 @@
-import { REGEX } from '../regex/patterns';
+import { REGEX } from '../regex/patterns.js';
 
 /**
  * Validation result interface

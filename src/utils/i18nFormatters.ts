@@ -1,4 +1,4 @@
-import { LANGUAGES, getLanguageByLocale } from '../constants/languages';
+import { LANGUAGES, getLanguageByLocale } from '../constants/languages.js';
 import { 
     TimeUnit, 
     getLocaleConjunction, 
@@ -6,8 +6,8 @@ import {
     getDayTranslation,
     getClosedTranslation,
     DayName
-} from '../constants/translations';
-import { getLocale, getCurrency } from '../context';
+} from '../constants/translations.js';
+import { getLocale, getCurrency } from '../context/index.js';
 
 /**
  * I18N Language Key for storing user's preferred language
