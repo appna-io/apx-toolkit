@@ -3,9 +3,9 @@
  * Provides a centralized configuration mechanism for the library
  */
 
-import { getLanguageByLocale, LANGUAGES } from '../constants/languages';
-import { getCurrencyForRegion } from '../constants/regions';
-import Persister from '../persister';
+import { getLanguageByLocale, LANGUAGES } from '../constants/languages.js';
+import { getCurrencyForRegion } from '../constants/regions.js';
+import Persister from '../persister/index.js';
 
 /**
  * Storage persistence options

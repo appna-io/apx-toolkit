@@ -18,6 +18,7 @@
 	  "skipLibCheck": true,
 	  "lib": ["es2018", "esnext.asynciterable", "dom"],
 	  "baseUrl": "./",
+	  "allowSyntheticDefaultImports": true
 	},
 	"include": [
 	  "src",

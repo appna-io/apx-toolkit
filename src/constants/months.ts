@@ -1,2 +1,2 @@
 // Re-export from translations file
-export * from './translations'; 
+export * from './translations.js'; 

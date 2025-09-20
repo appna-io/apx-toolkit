@@ -1,4 +1,4 @@
-import { setItem, getItem, removeItem, isPersisterAvailable } from './utils';
+import { setItem, getItem, removeItem, isPersisterAvailable } from './utils.js';
 
 export type PersisterData = Record<string, {
     value: any;
@@ -451,4 +451,4 @@ export class SessionStorage {
     }
 }
 
-export { setItem, getItem, removeItem, isPersisterAvailable } from './utils';
+export { setItem, getItem, removeItem, isPersisterAvailable } from './utils.js';
