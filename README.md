@@ -4,7 +4,7 @@
 [![AppNA.io](https://img.shields.io/badge/appna.io--UX/UI-orange.svg)](https://appna.io)
 [![apx-ui](https://img.shields.io/badge/tag-apx--ui-purple.svg)](https://github.com/appna-io/apx-toolkit)
 [![apx-ui](https://img.shields.io/badge/tag-AllInOne--Utility-purple.svg)](https://github.com/appna-io/apx-toolkit)
-[![220 test cases passed](https://img.shields.io/badge/passed-220--Tests-passed--green.svg)](https://github.com/appna-io/apx-toolkit/src/__tests__)
+[![220 test cases passed](https://img.shields.io/badge/passed-220--Tests-passed--green.svg)](https://github.com/appna-io/apx-toolkit/tree/main/src/__tests__)
 
 A modern utility SDK for frontend web applications.  
 Includes regex-based validators, generic helpers, formatting utilities, date tools, magic constants, phone number formatting, scroll utilities, storage persister, and more.
@@ -646,20 +646,62 @@ groupBy(users, 'department');
 
 sortBy(users, 'age'); // Sort by age ascending
 sortBy(users, 'age', 'desc'); // Sort by age descending
+```
 
-// Performance utilities
+```javascript
+// Performance Utility
+
+// Debounce
+
+// JS Example:
 const debouncedSearch = debounce((query: string) => {
     console.log('Searching for:', query);
 }, 300);
 
+// React onClick example:
+
+<button onClick={debounce(() => console.log("Clicked!"), 500)}>
+  Click me
+</button>
+/**
+ * 
+ * If the user clicks 5 times rapidly:
+ - All previous timers get canceled.
+ - After 500ms of no further clicks, the callback fires once.
+ 
+ * Effect: “Only run after the last click in a burst.”
+ */
+
+
+// Throttle
+
+// JS Example:
 const throttledScroll = throttle(() => {
     console.log('Scroll event');
 }, 100);
 
+// React onClick example:
+<button onClick={throttle(() => console.log("Clicked!"), 1000)}>
+  Click me
+</button>
+
+/**
+ * 
+ * If the user clicks 5 times rapidly:
+   - First click triggers immediately.
+  - Next clicks within 1000ms are ignored.
+  - After 1000ms, another click will be accepted.
+
+ * Effect: “Run immediately, then ignore until delay passes.”
+*/
+```
+
+```javascript
 // Random utilities
 randomString(10); // 'aB3xY9mK2p'
 randomNumber(1, 100); // Random number between 1 and 100
 ```
+
 
 **Real-World Usage:**
 ```ts
