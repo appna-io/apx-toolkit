@@ -355,7 +355,7 @@ console.log(`Rating: ${formatNumber(product.rating, 'en-US', { minimumFractionDi
 ```ts
 formatPhoneNumber(
   phone: string,
-  format: "PPP - EEE SSSS" | "(PPP) - EEE SSSS" | "(PP)  EEE SSSS" | "PP-EEE SSSS" | "PPP-EEE SSSS" | "+C (PPP)-EEE-SSSS" | "+C (PPP) EEESSSS" | string,
+  format: "PPP - EEE SSSS" | "(PPP) - EEE SSSS" | "(PP)  EEE SSSS" | "PP-EEE SSSS" | "PPP-EEE SSSS" | "+C (PPP)-EEE-SSSS" | "+C (PPP) EEESSSS" | "E.164" | string,
   options?: {
     leadingDigitPad?: string
     inputIncludesCountry?: boolean | "autoDetect"
@@ -368,6 +368,21 @@ formatPhoneNumber(
 COUNTRY_CODES: {
   IL: 972, US: 1, CA: 1, GB: 44, FR: 33, DE: 49, IT: 39, ES: 34, NL: 31, BE: 32, CH: 41, AT: 43, SE: 46, NO: 47, DK: 45, FI: 358, IE: 353, AU: 61, NZ: 64, AE: 971, SA: 966, JO: 962, EG: 20, TR: 90
 }
+```
+
+**E.164 format**
+
+- **What it is**: International standard, `+` country code + national number (no spaces/dashes/parentheses)
+- **Behavior**: Removes a single leading national trunk `0` from the national number when present
+
+```ts
+// Without country code (uses originCountry)
+formatPhoneNumber('0502892553', 'E.164', { originCountry: 'IL' });
+// '+972502892553'
+
+// With country code in input
+formatPhoneNumber('+9720502892553', 'E.164');
+// '+972502892553'
 ```
 
 ### Context System (Global Configuration)

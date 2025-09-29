@@ -168,7 +168,9 @@ originCountry?: keyof typeof COUNTRY_CODES
         if (!countryCode && originCountry) {
             countryCode = COUNTRY_CODES[originCountry].toString();
         }
-        return '+' + countryCode + workingNumber;
+        // E.164 must not include national trunk prefix (commonly a single leading 0)
+        const e164NationalNumber = workingNumber.replace(/^0/, '');
+        return '+' + countryCode + e164NationalNumber;
     }
 
     if (format.includes('+C')) {

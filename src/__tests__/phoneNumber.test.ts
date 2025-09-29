@@ -51,6 +51,16 @@ describe('Phone Number Utilities', () => {
         });
     });
 
+    describe('E.164 formatting', () => {
+      test('should format Israeli number without country code to E.164', () => {
+        expect(formatPhoneNumber('0502892553', 'E.164', { originCountry: 'IL' })).toBe('+972502892553');
+      });
+
+      test('should format Israeli number with country code to E.164', () => {
+        expect(formatPhoneNumber('+9720502892553', 'E.164')).toBe('+972502892553');
+      });
+    });
+
     describe('Country code detection', () => {
       test('should auto-detect country code with + prefix', () => {
         expect(formatPhoneNumber('+9720502892553', '+C (PPP)-EEE-SSSS')).toBe('+972 (050)-289-2553');
