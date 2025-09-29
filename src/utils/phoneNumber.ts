@@ -35,6 +35,7 @@ export function formatPhoneNumber(
 | 'PPP-EEE SSSS'
 | '+C (PPP)-EEE-SSSS'
 | '+C (PPP) EEESSSS'
+| 'E.164'
 | string,
     options?: {
 leadingDigitPad?: string
@@ -161,6 +162,14 @@ originCountry?: keyof typeof COUNTRY_CODES
 
 
     let result = format;
+
+    // Handle E.164 format
+    if (format === 'E.164') {
+        if (!countryCode && originCountry) {
+            countryCode = COUNTRY_CODES[originCountry].toString();
+        }
+        return '+' + countryCode + workingNumber;
+    }
 
     if (format.includes('+C')) {
         result = result.replace('+C', '+' + countryCode);
