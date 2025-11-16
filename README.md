@@ -20,6 +20,7 @@ Includes regex-based validators, generic helpers, formatting utilities, date too
   - [Validators (Regex-based)](#validators-regex-based)
   - [Date & Time Utilities](#date--time-utilities)
   - [Currency & Number Formatters](#currency--number-formatters)
+  - [Currency Utilities (Locale-based)](#currency-utilities-locale-based)
   - [Phone Number Formatting](#phone-number-formatting)
   - [Context System (Global Configuration)](#context-system-global-configuration)
   - [I18N Formatters (Internationalization)](#i18n-formatters-internationalization)
@@ -137,6 +138,7 @@ npx ts-node examples/real-world-usage.ts
 - `context-demo.ts` - Context system usage
 - `i18n-formatters-demo.ts` - Internationalization
 - `region-currency-demo.ts` - Currency mapping
+- `currency-utils-example.ts` - Locale-based currency utilities
 - `time-formatter-demo.ts` - Time formatting
 - `translations-demo.ts` - Translation utilities
 
@@ -349,6 +351,134 @@ console.log(`Final Price: ${formatCurrency(product.price * (1 - product.discount
 console.log(`File Size: ${formatFileSize(product.fileSize)}`);
 console.log(`Rating: ${formatNumber(product.rating, 'en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/5`);
 ```
+
+### Currency Utilities (Locale-based)
+
+Get currency information (code, symbol, name) from locale strings. Supports 50+ countries including Israel, UAE, USA, and Asian countries.
+
+```ts
+getCurrencyByLocale(locale: string): CurrencyInfo | null
+getCurrencyCode(locale: string): string | null
+getCurrencySymbol(locale: string): string | null
+hasCurrencyMapping(locale: string): boolean
+getSupportedCountryCodes(): string[]
+getAllCurrencies(): CurrencyInfo[]
+
+// Types
+interface CurrencyInfo {
+  code: string;    // ISO 4217 currency code (e.g., 'ILS', 'USD')
+  symbol: string;  // Currency symbol (e.g., '₪', '$')
+  name: string;    // Full currency name (e.g., 'Israeli New Shekel')
+}
+```
+
+**Supported Locale Formats:**
+
+The utility handles various locale string formats:
+- Country code only: `IL`, `US`, `AE`
+- Language-Country with slash: `he/IL`, `en/US`, `ar/AE`
+- Language-Country with dash (BCP 47): `he-IL`, `en-US`, `ar-AE`
+- Language-Country with underscore: `he_IL`, `en_US`, `ar_AE`
+- Case-insensitive: `il`, `IL`, `Il`
+
+**Examples:**
+
+```ts
+// Israel - all formats return ILS
+getCurrencyByLocale('he/IL'); // { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' }
+getCurrencyByLocale('IL');    // { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' }
+getCurrencyByLocale('he-IL'); // { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' }
+getCurrencyByLocale('ar-IL'); // { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' }
+
+// Get just the currency code
+getCurrencyCode('he/IL'); // 'ILS'
+getCurrencyCode('IL');    // 'ILS'
+getCurrencyCode('US');    // 'USD'
+getCurrencyCode('ar-AE'); // 'AED'
+
+// Get just the currency symbol
+getCurrencySymbol('IL');    // '₪'
+getCurrencySymbol('US');    // '$'
+getCurrencySymbol('en-GB'); // '£'
+getCurrencySymbol('ar-AE'); // 'د.إ'
+
+// UAE and other Asian countries
+getCurrencyCode('ar-AE'); // 'AED' (UAE Dirham)
+getCurrencyCode('ar-SA'); // 'SAR' (Saudi Riyal)
+getCurrencyCode('ja-JP'); // 'JPY' (Japanese Yen)
+getCurrencyCode('zh-CN'); // 'CNY' (Chinese Yuan)
+getCurrencyCode('ko-KR'); // 'KRW' (South Korean Won)
+getCurrencyCode('hi-IN'); // 'INR' (Indian Rupee)
+
+// Check if locale has currency mapping
+hasCurrencyMapping('IL');     // true
+hasCurrencyMapping('he-IL');  // true
+hasCurrencyMapping('xyz-XYZ'); // false
+
+// Get all supported country codes
+const codes = getSupportedCountryCodes();
+// ['IL', 'AE', 'SA', 'QA', 'KW', 'US', 'GB', 'DE', ...]
+
+// Get all unique currencies
+const currencies = getAllCurrencies();
+currencies.forEach(currency => {
+  console.log(`${currency.code} (${currency.symbol}) - ${currency.name}`);
+});
+// ILS (₪) - Israeli New Shekel
+// USD ($) - US Dollar
+// EUR (€) - Euro
+// ...
+```
+
+**Supported Regions:** 50+ countries including:
+- 🇮🇱 Israel, 🇦🇪 UAE, 🇸🇦 Saudi Arabia, 🇶🇦 Qatar, 🇰🇼 Kuwait (Middle East)
+- 🇯🇵 Japan, 🇨🇳 China, 🇰🇷 South Korea, 🇮🇳 India, 🇸🇬 Singapore, 🇹🇭 Thailand (Asia)
+- 🇺🇸 USA, 🇨🇦 Canada, 🇲🇽 Mexico, 🇧🇷 Brazil (Americas)
+- 🇬🇧 UK, 🇩🇪 Germany, 🇫🇷 France, 🇪🇸 Spain (Europe)
+- 🇦🇺 Australia, 🇳🇿 New Zealand (Oceania)
+
+**Real-World Usage:**
+
+```ts
+// Multi-currency e-commerce
+const getUserCurrency = (userLocale: string) => {
+  const currency = getCurrencyByLocale(userLocale);
+  if (currency) {
+    return formatCurrency(product.price, currency.code, userLocale);
+  }
+  return formatCurrency(product.price, 'USD', 'en-US'); // Fallback
+};
+
+// Internationalization setup
+const initializeApp = (locale: string) => {
+  const currencyInfo = getCurrencyByLocale(locale);
+  if (currencyInfo) {
+    config({
+      defaultLanguage: locale.split(/[/-_]/)[0],
+      defaultCurrency: currencyInfo.code,
+      defaultRegion: locale.split(/[/-_]/)[1] || 'US'
+    });
+  }
+};
+
+// Display currency selector
+const CurrencySelector = ({ currentLocale }: { currentLocale: string }) => {
+  const currencies = getAllCurrencies();
+  const currentCurrency = getCurrencyByLocale(currentLocale);
+  
+  return (
+    <select value={currentCurrency?.code}>
+      {currencies.map(currency => (
+        <option key={currency.code} value={currency.code}>
+          {currency.symbol} {currency.name}
+        </option>
+      ))}
+    </select>
+  );
+};
+```
+
+For complete documentation, see [Currency Utilities Documentation](./docs/CURRENCY_UTILS.md).
 
 ### Phone Number Formatting
 

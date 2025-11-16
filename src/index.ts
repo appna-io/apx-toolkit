@@ -40,5 +40,8 @@ export * from './utils/scrollUtils.js';
 // Export credit card utilities
 export * from './utils/creditCard.js';
 
+// Export currency utilities
+export * from './utils/currencyUtils.js';
+
 // Export types
 export * from './common-types/index.js';
