@@ -211,3 +211,4 @@ export const getAllCurrencies = (): CurrencyInfo[] => {
     return Array.from(uniqueCurrencies.values());
 };
 
+

@@ -73,3 +73,4 @@ getAllCurrencies().slice(0, 5).forEach(currency => {
     console.log(`  ${currency.code} (${currency.symbol}) - ${currency.name}`);
 });
 
+
