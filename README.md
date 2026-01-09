@@ -596,15 +596,6 @@ formatCurrencyI18N(1234.56); // Now uses Hebrew locale & context currency
 formatCurrencyI18N(1234.56, 'EUR', 'de-DE'); // German Euro formatting
 ```
 
-**Legacy Functions** (Deprecated):
-```ts
-setCurrentLanguage(languageCode: keyof typeof LANGUAGES): void  // Use setLanguage instead
-setCurrentLocale(locale: string): void                         // Use setLocale instead  
-getCurrentLocale(): string                                     // Use getLocale instead
-getCurrentLanguageCode(): keyof typeof LANGUAGES              // Use getLanguage instead
-getCurrentLocaleFromStorage(): string | null
-isBrowser(): boolean                                           // Use context system instead
-```
 
 ### Constants
 

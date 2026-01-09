@@ -243,6 +243,30 @@ export const hasValidFileExtension = (value: string): boolean => {
 };
 
 /**
+ * This is from dotCollab: Added HTML validator to check if input contains HTML tags
+ */
+/**
+ * Check if a string contains HTML tags
+ * Detects opening tags, closing tags, and self-closing tags
+ * 
+ * @param value - The string to check for HTML content
+ * @returns true if the string contains HTML tags, false otherwise
+ * 
+ * @example
+ * ```ts
+ * isHTML('<div>Hello</div>'); // true
+ * isHTML('<p class="test">Text</p>'); // true
+ * isHTML('<img src="test.jpg" />'); // true
+ * isHTML('Plain text'); // false
+ * isHTML(''); // false
+ * ```
+ */
+export const isHTML = (value: string): boolean => {
+    if (!value || typeof value !== 'string') return false;
+    return REGEX.html.test(value);
+};
+
+/**
  * Generic validation function using regex patterns
  */
 export const validateWithRegex = (value: string, pattern: keyof typeof REGEX): boolean => {

@@ -2,7 +2,6 @@ import {
     formatCurrencyI18N,
     formatDateI18N,
     formatTimeI18N,
-    getCurrentLocale,
 } from '../utils/i18nFormatters';
 import { config, resetContext } from '../context';
 
@@ -186,16 +185,8 @@ describe('I18N Formatters', () => {
 
 
 
-    describe('Legacy Functions (Deprecated)', () => {
-        describe('getCurrentLocale', () => {
-            it('should return context locale', () => {
-                (getLocale as jest.Mock).mockReturnValue('he-IL');
-                
-                const result = getCurrentLocale();
-                expect(result).toBe('he-IL');
-            });
-        });
-    });
+    // Removed: Legacy Functions (Deprecated) - getCurrentLocale() was removed in v3.0
+    // Use getLocale() from context instead
 
     describe('Integration with Context', () => {
         it('should use context values for all formatters', () => {

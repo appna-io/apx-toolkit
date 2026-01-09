@@ -9,20 +9,9 @@ import {
 } from '../constants/translations.js';
 import { getLocale, getCurrency } from '../context/index.js';
 
-/**
- * I18N Language Key for storing user's preferred language
- * @deprecated Use context system instead. This will be removed in future versions.
- */
-export const I18N_LANG_KEY = 'apxLng';
-
 // Removed legacy isBrowser function - use isBrowser from context instead
-
-/**
- * Get the current locale from context or default to 'en-US'
- */
-export const getCurrentLocale = (): string => {
-    return getLocale();
-};
+// Removed I18N_LANG_KEY - use context system instead
+// Removed getCurrentLocale() - use getLocale() from context instead
 
 /**
  * Currency Format: Format the currency based on the locale
@@ -36,7 +25,7 @@ export const formatCurrencyI18N = (
     currency?: string,
     locale?: string
 ): string => {
-    const currentLocale = locale || getCurrentLocale();
+    const currentLocale = locale || getLocale();
     const currentCurrency = currency || getCurrency();
   
     try {
@@ -64,7 +53,7 @@ export const formatDateI18N = (
     variant: 'appointment' | 'default' = 'default',
     locale?: string
 ): string => {
-    const currentLocale = locale || getCurrentLocale();
+    const currentLocale = locale || getLocale();
     const dateObj = new Date(date);
   
     if (isNaN(dateObj.getTime())) {
@@ -253,7 +242,7 @@ export const formatTimeI18N = (
     unit: TimeUnit,
     locale?: string
 ): string => {
-    const currentLocale = locale || getCurrentLocale();
+    const currentLocale = locale || getLocale();
     
     // Get the appropriate translation for the time unit
     const translation = getTimeUnitTranslation(currentLocale, unit, value);
@@ -307,7 +296,7 @@ export const formatOpeningHours = (
         language?: string;
     } = {}
 ): string[] => {
-    const currentLocale = options.locale || getCurrentLocale();
+    const currentLocale = options.locale || getLocale();
     const use24Hour = options.use24Hour || false;
     const language = options.language || getLanguageByLocale(currentLocale)?.key || 'en';
     

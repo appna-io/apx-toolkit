@@ -1,13 +1,9 @@
 import { 
     formatCurrencyI18N, 
     formatDateI18N, 
-    setCurrentLanguage, 
-    setCurrentLocale, 
-    getCurrentLocale, 
-    getCurrentLanguageCode,
-    getCurrentLocaleFromStorage,
-    isBrowser
+    formatTimeI18N
 } from '../src/utils/i18nFormatters';
+import { config, setLanguage, setLocale, getLocale, getLanguage, isBrowser, resetContext } from '../src/context';
 
 // Demo function to show proper usage
 export function demonstrateI18nFormatters() {
@@ -16,20 +12,28 @@ export function demonstrateI18nFormatters() {
     // Check if we're in a browser environment
     console.log('Is browser environment:', isBrowser());
     
+    // Initialize context
+    config({
+        defaultLanguage: 'en',
+        defaultCurrency: 'USD',
+        defaultTimezone: 'America/New_York',
+        defaultRegion: 'US',
+        persist: 'localStorage',
+        debug: false
+    });
+    
     if (isBrowser()) {
         // Method 1: Set language by language code (recommended)
         console.log('\n--- Method 1: Set by language code ---');
-        setCurrentLanguage('he'); // This stores 'he' in localStorage
-        console.log('Current locale:', getCurrentLocale()); // Should return 'he-IL'
-        console.log('Current language code:', getCurrentLanguageCode()); // Should return 'he'
-        console.log('Raw localStorage value:', getCurrentLocaleFromStorage()); // Should return 'he'
+        setLanguage('he'); // This stores 'he' in localStorage
+        console.log('Current locale:', getLocale()); // Should return 'he-IL'
+        console.log('Current language code:', getLanguage()); // Should return 'he'
         
         // Method 2: Set language by full locale string
         console.log('\n--- Method 2: Set by full locale ---');
-        setCurrentLocale('ar-SA'); // This stores 'ar' in localStorage
-        console.log('Current locale:', getCurrentLocale()); // Should return 'ar-SA'
-        console.log('Current language code:', getCurrentLanguageCode()); // Should return 'ar'
-        console.log('Raw localStorage value:', getCurrentLocaleFromStorage()); // Should return 'ar'
+        setLocale('ar-SA'); // This stores 'ar-SA' in context
+        console.log('Current locale:', getLocale()); // Should return 'ar-SA'
+        console.log('Current language code:', getLanguage()); // Should return 'ar'
         
         // Test formatting functions
         console.log('\n--- Formatting Examples ---');
@@ -42,10 +46,13 @@ export function demonstrateI18nFormatters() {
         
         // Reset to English
         console.log('\n--- Reset to English ---');
-        setCurrentLanguage('en');
-        console.log('Current locale:', getCurrentLocale()); // Should return 'en-US'
+        setLanguage('en');
+        console.log('Current locale:', getLocale()); // Should return 'en-US'
         console.log('Currency (English):', formatCurrencyI18N(1234.56, 'USD'));
         console.log('Date (English):', formatDateI18N(testDate, undefined, 'default'));
+        
+        // Clean up
+        resetContext();
         
     } else {
         console.log('Not in browser environment - localStorage not available');
@@ -62,4 +69,3 @@ export function demonstrateI18nFormatters() {
 if (require.main === module) {
     demonstrateI18nFormatters();
 }
-

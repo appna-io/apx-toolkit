@@ -105,10 +105,17 @@ export const REGEX = {
     username: /^[a-zA-Z0-9_-]{3,20}$/,
 
     /**
-   * File extension validation pattern
-   * Matches: .jpg, .pdf, .docx
-   */
-    fileExtension: /\.(jpg|jpeg|png|gif|bmp|svg|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv|zip|rar|7z)$/i
+     * File extension validation pattern
+     * Matches: .jpg, .pdf, .docx
+     */
+    fileExtension: /\.(jpg|jpeg|png|gif|bmp|svg|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv|zip|rar|7z)$/i,
+
+    /**
+     * HTML validation pattern
+     * Matches strings containing HTML tags (opening, closing, or self-closing)
+     * Matches: <div>, </div>, <img />, <br/>, <p class="test">
+     */
+    html: /<[^>]+>/i
 } as const;
 
 export type RegexPattern = keyof typeof REGEX; 

@@ -129,35 +129,45 @@ export const deepClone = <T>(obj: T): T => {
 
 /**
  * Merge multiple objects (shallow merge)
- * TODO: Fix TypeScript issues
+ * @param objects - Objects to merge
+ * @returns Merged object
  */
-// export const merge = <T extends Record<string, any>>(...objects: Partial<T>[]): T => {
-//   return objects.reduce((result, obj) => {
-//     return { ...result, ...obj } as T;
-//   }, {} as T);
-// };
+export const merge = <T extends Record<string, unknown>>(...objects: Array<Partial<T>>): Partial<T> => {
+    return objects.reduce((result, obj) => {
+        return { ...result, ...obj };
+    }, {} as Partial<T>);
+};
 
 /**
  * Deep merge multiple objects
- * TODO: Fix TypeScript issues
+ * @param objects - Objects to merge
+ * @returns Deeply merged object
  */
-// export const deepMerge = <T extends Record<string, any>>(...objects: Partial<T>[]): T => {
-//   return objects.reduce((result, obj) => {
-//     if (!obj) return result;
+export const deepMerge = <T extends Record<string, unknown>>(...objects: Array<Partial<T>>): Partial<T> => {
+    const result: Record<string, unknown> = {};
     
-//     for (const key in obj) {
-//       if (obj.hasOwnProperty(key)) {
-//         if (isObject(obj[key]) && isObject((result as any)[key])) {
-//           (result as any)[key] = deepMerge((result as any)[key], obj[key]);
-//         } else {
-//           (result as any)[key] = obj[key];
-//         }
-//       }
-//     }
+    for (const obj of objects) {
+        if (!obj) continue;
+        
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                const objValue = obj[key];
+                const resultValue = result[key];
+                
+                if (isObject(objValue) && isObject(resultValue)) {
+                    result[key] = deepMerge(
+                        resultValue as Record<string, unknown>,
+                        objValue as Record<string, unknown>
+                    ) as unknown;
+                } else if (objValue !== undefined) {
+                    result[key] = objValue;
+                }
+            }
+        }
+    }
     
-//     return result;
-//   }, {} as T);
-// };
+    return result as Partial<T>;
+};
 
 /**
  * Pick specific properties from an object
@@ -187,39 +197,7 @@ export const omit = <T extends object, K extends keyof T>(obj: T, keys: K[]): Om
     return result;
 };
 
-/**
- * Debounce a function
- */
-export const debounce = <T extends (...args: any[]) => any>(
-    func: T,
-    delay: number
-): ((...args: Parameters<T>) => void) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-  
-    return (...args: Parameters<T>) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func(...args), delay);
-    };
-};
-
-/**
- * Throttle a function
- */
-export const throttle = <T extends (...args: any[]) => any>(
-    func: T,
-    delay: number
-): ((...args: Parameters<T>) => void) => {
-    let lastCall = 0;
-  
-    return (...args: Parameters<T>) => {
-        const now = Date.now();
-    
-        if (now - lastCall >= delay) {
-            lastCall = now;
-            func(...args);
-        }
-    };
-};
+// This is from dotCollab: Removed debounce and throttle - they are now in dedicated debounce.ts file
 
 /**
  * Generate a random string
