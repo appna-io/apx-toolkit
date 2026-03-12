@@ -190,17 +190,17 @@ class ApxContext {
     }
 
     /**
-     * Detect currency from locale string
+     * Detect currency from locale string using Intl.Locale for robust
+     * region extraction (handles zh-Hans-CN, en-US, ar-SA, etc.)
      */
     private detectCurrencyFromLocale(locale: string): string | null {
         try {
-            const region = locale.split('-')[1]?.toUpperCase();
+            const region = new Intl.Locale(locale).region?.toUpperCase();
             if (region) {
-                const currency = getCurrencyForRegion(region);
-                return currency || null;
+                return getCurrencyForRegion(region) || null;
             }
-        } catch (error) {
-            // this.log('Failed to detect currency from locale:', error); // Original line commented out
+        } catch {
+            this.log('Failed to detect currency from locale:', locale);
         }
         return null;
     }
@@ -307,7 +307,7 @@ class ApxContext {
     }
 
     /**
-     * Auto-detect currency from browser locale
+     * Auto-detect currency from browser locale via navigator.language
      */
     private autoDetectCurrency(): string | null {
         if (!this.isBrowser()) {
@@ -315,10 +315,7 @@ class ApxContext {
         }
 
         try {
-            // Use Intl.DateTimeFormat to get the browser locale (this matches the test mocking)
-            const dateTimeFormat = new Intl.DateTimeFormat();
-            const browserLocale = dateTimeFormat.resolvedOptions().locale;
-            
+            const browserLocale = navigator.language;
             if (browserLocale) {
                 const detectedCurrency = this.detectCurrencyFromLocale(browserLocale);
                 if (detectedCurrency) {

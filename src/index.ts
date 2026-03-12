@@ -37,7 +37,6 @@ export * from './utils/generic.js';
 // Export scroll utilities
 export * from './utils/scrollUtils.js'; 
 
-// This is from dotCollab: Export debounce/throttle utilities
 export * from './utils/debounce.js';
 
 // Export credit card utilities
@@ -46,10 +45,8 @@ export * from './utils/creditCard.js';
 // Export currency utilities
 export * from './utils/currencyUtils.js';
 
-// This is from dotCollab: Export browser detection utility
 export * from './utils/browserDetection.js';
 
-// This is from dotCollab: Export browser title utility
 export * from './utils/browserTitle.js';
 
 // Export types
