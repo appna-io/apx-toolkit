@@ -197,6 +197,29 @@ export const omit = <T extends object, K extends keyof T>(obj: T, keys: K[]): Om
     return result;
 };
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+    if (typeof value !== 'object' || value === null) return false;
+    const proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+};
+
+/**
+ * Deep equality for JSON-shaped data (records, drafts, settings), as lodash's `isEqual` compares it:
+ * primitives (`NaN` equals itself), arrays by position, plain objects by their own keys. A key holding
+ * `undefined` still counts, so `{ a: undefined }` is not `{}`. Anything else (a `Date`, a class
+ * instance) equals only itself.
+ */
+export const isEqual = (a: unknown, b: unknown): boolean => {
+    if (a === b || Object.is(a, b)) return true;
+    if (Array.isArray(a) && Array.isArray(b)) {
+        return a.length === b.length && a.every((value, i) => isEqual(value, b[i]));
+    }
+    if (!isPlainObject(a) || !isPlainObject(b)) return false;
+
+    const keys = Object.keys(a);
+    return keys.length === Object.keys(b).length && keys.every((key) => Object.prototype.hasOwnProperty.call(b, key) && isEqual(a[key], b[key]));
+};
+
 // This is from dotCollab: Removed debounce and throttle - they are now in dedicated debounce.ts file
 
 /**
