@@ -8,6 +8,7 @@ import {
     DayName
 } from '../constants/translations.js';
 import { getLocale, getCurrency } from '../context/index.js';
+import { formatCurrencyIntl, formatDateIntl, formatNumberIntl } from './intlFormat.js';
 
 // Removed legacy isBrowser function - use isBrowser from context instead
 // Removed I18N_LANG_KEY - use context system instead
@@ -28,15 +29,7 @@ export const formatCurrencyI18N = (
     const currentLocale = locale || getLocale();
     const currentCurrency = currency || getCurrency();
   
-    try {
-        return new Intl.NumberFormat(currentLocale, {
-            style: 'currency',
-            currency: currentCurrency
-        }).format(amount);
-    } catch (error) {
-    // Fallback formatting
-        return `${currentCurrency} ${amount.toFixed(2)}`;
-    }
+    return formatCurrencyIntl(amount, currentCurrency, currentLocale);
 };
 
 /**
@@ -100,7 +93,7 @@ const formatCustomDate = (
     }
 
     try {
-        return new Intl.DateTimeFormat(locale, options).format(date);
+        return formatDateIntl(date, locale, options);
     } catch (error) {
         return date.toLocaleDateString(locale, options);
     }
@@ -143,10 +136,10 @@ const formatAppointmentDate = (
     };
 
     try {
-        const dateStr = new Intl.DateTimeFormat(locale, dateOptions).format(date);
+        const dateStr = formatDateIntl(date, locale, dateOptions);
     
         if (hasTime) {
-            const timeStr = new Intl.DateTimeFormat(locale, timeOptions).format(date);
+            const timeStr = formatDateIntl(date, locale, timeOptions);
       
             // Handle different locale formats for "at" conjunction
             const conjunction = getLocaleConjunction(locale);
@@ -189,10 +182,10 @@ const formatDefaultDate = (
     };
 
     try {
-        const dateStr = new Intl.DateTimeFormat(locale, dateOptions).format(date);
+        const dateStr = formatDateIntl(date, locale, dateOptions);
     
         if (hasTime) {
-            const timeStr = new Intl.DateTimeFormat(locale, timeOptions).format(date);
+            const timeStr = formatDateIntl(date, locale, timeOptions);
             return `${dateStr} ${timeStr}`;
         }
     
@@ -248,7 +241,7 @@ export const formatTimeI18N = (
     const translation = getTimeUnitTranslation(currentLocale, unit, value);
     
     // Format the number according to locale
-    const formattedNumber = new Intl.NumberFormat(currentLocale).format(value);
+    const formattedNumber = formatNumberIntl(value, currentLocale);
     
     return `${formattedNumber} ${translation}`;
 };
@@ -528,7 +521,7 @@ const formatTime = (timeString: string, use24Hour: boolean, locale: string): str
             hour12: !use24Hour
         };
         
-        return new Intl.DateTimeFormat(locale, options).format(date);
+        return formatDateIntl(date, locale, options);
     } catch (error) {
         // Fallback to original string if parsing fails
         return timeString;

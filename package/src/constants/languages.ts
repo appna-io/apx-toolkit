@@ -54,20 +54,49 @@ export const LANGUAGES = {
   
 
 /**
- * Get language by locale
- * @param locale - Locale string (e.g., 'en-US', 'he-IL', 'ar-SA')
- * @returns Language object or undefined if not found
- */export const getLanguageByLocale = (locale: string): {key: KeyOf<typeof LANGUAGES>, lang: ApxLanguageObject} | null => {
-    const langKey = Object.keys(LANGUAGES).find(lang => LANGUAGES[lang as keyof typeof LANGUAGES].locale === locale);
-    if (!langKey) {
-        return null;   
+ * Extract the base language subtag from a locale.
+ * Uses Intl.Locale so extensions and script subtags are handled properly
+ * ('ar-SA-u-nu-latn' -> 'ar', 'zh-Hans-CN' -> 'zh'), falling back to a plain
+ * split for inputs Intl refuses to parse.
+ */
+const getBaseLanguage = (locale: string): string => {
+    try {
+        return new Intl.Locale(locale).language.toLowerCase();
+    } catch {
+        return locale.split('-')[0].toLowerCase();
     }
-    const lang = LANGUAGES[langKey as keyof typeof LANGUAGES];
+};
+
+/**
+ * Get language by locale
+ *
+ * Matches the exact locale first, then falls back to the base language subtag,
+ * so regional variants the library does not ship a locale for still resolve:
+ * 'ar-EG' and 'ar-SA-u-nu-latn' both find Arabic, 'en-GB' finds English.
+ * Without the fallback these returned null and callers silently defaulted to
+ * English.
+ *
+ * @param locale - Locale string (e.g., 'en-US', 'he-IL', 'ar-SA', 'pt-BR')
+ * @returns Language object, or null when the language is not supported at all
+ */export const getLanguageByLocale = (locale: string): {key: KeyOf<typeof LANGUAGES>, lang: ApxLanguageObject} | null => {
+    if (!locale || typeof locale !== 'string') {
+        return null;
+    }
+
+    const languageKeys = Object.keys(LANGUAGES) as Array<KeyOf<typeof LANGUAGES>>;
+    const exactKey = languageKeys.find(lang => LANGUAGES[lang].locale === locale);
+    const baseLanguage = getBaseLanguage(locale);
+    const langKey = exactKey ?? languageKeys.find(lang => lang === baseLanguage);
+
+    if (!langKey) {
+        return null;
+    }
+    const lang = LANGUAGES[langKey];
     if (!lang) {
         return null;
     }
     return {
-        key: langKey as KeyOf<typeof LANGUAGES>,
+        key: langKey,
         lang
     };
 };

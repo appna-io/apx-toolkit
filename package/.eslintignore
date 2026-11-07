@@ -1,5 +1,5 @@
 *.d.ts
-vite.config.ts
+tsup.config.ts
 dist/
 node_modules/
 package-lock.json

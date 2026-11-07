@@ -17,7 +17,10 @@ const CURRENCY_MAP: Record<string, CurrencyInfo> = {
     // Middle East
     'IL': { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' },
     'AE': { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
-    'SA': { code: 'SAR', symbol: 'ر.س', name: 'Saudi Riyal' },
+    // U+20C1 SAUDI RIYAL SIGN — the official symbol, in place of the 'ر.س'
+    // letterform. Added in Unicode 17.0 (2025), so older fonts may render a
+    // missing-glyph box; revert to 'ر.س' if that matters for your users.
+    'SA': { code: 'SAR', symbol: '⃁', name: 'Saudi Riyal' },
     'QA': { code: 'QAR', symbol: 'ر.ق', name: 'Qatari Riyal' },
     'KW': { code: 'KWD', symbol: 'د.ك', name: 'Kuwaiti Dinar' },
     'OM': { code: 'OMR', symbol: 'ر.ع.', name: 'Omani Rial' },
@@ -201,14 +204,44 @@ export const getSupportedCountryCodes = (): string[] => {
 export const getAllCurrencies = (): CurrencyInfo[] => {
     // Return unique currencies (some countries share currencies like EUR)
     const uniqueCurrencies = new Map<string, CurrencyInfo>();
-    
+
     Object.values(CURRENCY_MAP).forEach(currency => {
         if (!uniqueCurrencies.has(currency.code)) {
             uniqueCurrencies.set(currency.code, currency);
         }
     });
-    
+
     return Array.from(uniqueCurrencies.values());
+};
+
+/**
+ * Currency code -> symbol, built once from CURRENCY_MAP.
+ * Several countries share a currency, so the first entry wins.
+ */
+const SYMBOLS_BY_CODE: Record<string, string> = Object.values(CURRENCY_MAP).reduce(
+    (symbols: Record<string, string>, currency) => {
+        if (!symbols[currency.code]) {
+            symbols[currency.code] = currency.symbol;
+        }
+        return symbols;
+    },
+    {}
+);
+
+/**
+ * Get a currency symbol from its ISO code
+ * @param code - ISO 4217 currency code (e.g., 'ILS', 'USD')
+ * @returns The symbol, or null when the currency is not in the map
+ * @example
+ * getCurrencySymbolByCode('ILS') // '₪'
+ * getCurrencySymbolByCode('USD') // '$'
+ * getCurrencySymbolByCode('XYZ') // null
+ */
+export const getCurrencySymbolByCode = (code: string): string | null => {
+    if (!code || typeof code !== 'string') {
+        return null;
+    }
+    return SYMBOLS_BY_CODE[code.toUpperCase()] ?? null;
 };
 
 

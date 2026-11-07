@@ -1,3 +1,5 @@
+import { formatDateIntl } from './intlFormat.js';
+
 /**
  * Format date to string with custom format
  */
@@ -303,7 +305,7 @@ export const formatDateLocale = (
     }
   
     try {
-        return new Intl.DateTimeFormat(locale, options).format(d);
+        return formatDateIntl(d, locale, options);
     } catch (error) {
         return d.toLocaleDateString(locale, options);
     }

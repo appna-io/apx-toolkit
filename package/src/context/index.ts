@@ -45,6 +45,24 @@ const DEFAULT_CONFIG: Required<ApxContextOptions> = {
 };
 
 /**
+ * Drop keys whose value is undefined.
+ *
+ * Spreading an explicit `undefined` overwrites the default it was meant to
+ * fall back to, so `config({ defaultCurrency: undefined })` would leave the
+ * config with no currency at all. Callers building options objects
+ * conditionally rely on undefined meaning "not provided".
+ */
+function stripUndefined(options: ApxContextOptions): ApxContextOptions {
+    const provided: ApxContextOptions = {};
+    (Object.keys(options) as Array<keyof ApxContextOptions>).forEach(key => {
+        if (options[key] !== undefined) {
+            (provided as Record<string, unknown>)[key] = options[key];
+        }
+    });
+    return provided;
+}
+
+/**
  * Internal context state
  */
 class ApxContext {
@@ -190,19 +208,25 @@ class ApxContext {
     }
 
     /**
-     * Detect currency from locale string using Intl.Locale for robust
-     * region extraction (handles zh-Hans-CN, en-US, ar-SA, etc.)
+     * Region subtag of a locale, via Intl.Locale so script subtags and
+     * extensions are handled (zh-Hans-CN -> CN, ar-SA-u-nu-latn -> SA).
+     * Returns null for a locale that names no region ('en') or cannot be parsed.
+     */
+    private getRegionFromLocale(locale: string): string | null {
+        try {
+            return new Intl.Locale(locale).region?.toUpperCase() ?? null;
+        } catch {
+            this.log('Failed to read region from locale:', locale);
+            return null;
+        }
+    }
+
+    /**
+     * Detect currency from locale string, via its region subtag.
      */
     private detectCurrencyFromLocale(locale: string): string | null {
-        try {
-            const region = new Intl.Locale(locale).region?.toUpperCase();
-            if (region) {
-                return getCurrencyForRegion(region) || null;
-            }
-        } catch {
-            this.log('Failed to detect currency from locale:', locale);
-        }
-        return null;
+        const region = this.getRegionFromLocale(locale);
+        return region ? getCurrencyForRegion(region) || null : null;
     }
 
     /**
@@ -223,88 +247,102 @@ class ApxContext {
         this.reset();
         this.log('After reset, config is:', this.config);
         
-        this.config = { ...DEFAULT_CONFIG, ...options };
+        const provided = stripUndefined(options);
+
+        this.config = { ...DEFAULT_CONFIG, ...provided };
         this.log('After applying options, config is:', this.config);
-        
-        // Update defaultLocale if defaultLanguage is provided and no explicit defaultLocale was provided
-        if (options.defaultLanguage && LANGUAGES[options.defaultLanguage] && !options.defaultLocale) {
-            this.config.defaultLocale = LANGUAGES[options.defaultLanguage].locale;
-            this.log('Updated defaultLocale to match defaultLanguage:', this.config.defaultLocale);
-        }
-        
+
         this.initialized = true;
-        
+
         this.loadPersistedValues(options.persist);
         this.log('After loading persisted values, config is:', this.config);
-        
-        // Only run currency detection if explicitly provided options are present
-        const hasExplicitOptions = options.defaultRegion || options.defaultLocale || options.defaultCurrency;
-        if (hasExplicitOptions) {
-            this.log('Explicit options provided, calling detectCurrencyFromConfig');
-            this.detectCurrencyFromConfig();
-        } else {
-            this.log('No explicit options provided, trying browser auto-detection');
-            // Try browser auto-detection when no explicit options are provided
-            if (this.isBrowser()) {
-                const detectedCurrency = this.autoDetectCurrency();
-                if (detectedCurrency) {
-                    this.config.defaultCurrency = detectedCurrency;
-                    this.log('Currency auto-detected from browser:', detectedCurrency);
-                } else {
-                    this.log('No currency auto-detected, keeping default:', this.config.defaultCurrency);
-                }
-            } else {
-                this.log('Not in browser, keeping default currency:', this.config.defaultCurrency);
-            }
-        }
-        
+
+        this.resolveRegionalSettings(provided);
+
         this.storeConfig(options.persist);
         this.log('Context initialized with final config:', this.config);
     }
 
     /**
-     * Detect currency from config options (region, locale) or browser
+     * Settle locale, language, region and currency together.
+     *
+     * The locale is the source of truth: language, region and currency each
+     * default to whatever it implies. Anything the caller passes explicitly
+     * overrides its derived default and is never second-guessed.
+     *
+     *   config({ defaultLocale: 'he-IL' })
+     *     -> language 'he', region 'IL', currency 'ILS'
+     *
+     *   config({ defaultLocale: 'he-IL', defaultCurrency: 'USD' })
+     *     -> language 'he', region 'IL', currency 'USD'   (override)
+     *
+     * Every decision reads `provided` — what the caller actually passed —
+     * rather than the resolved config, which cannot tell a deliberate value
+     * from a default one.
      */
-    private detectCurrencyFromConfig(): void {
-        let detectedCurrency: string | null = null;
+    private resolveRegionalSettings(provided: ApxContextOptions): void {
+        this.config.defaultLocale = this.resolveLocale(provided);
+        this.config.defaultLanguage = this.resolveLanguage(provided, this.config.defaultLocale);
+        this.config.defaultRegion = this.resolveRegion(provided, this.config.defaultLocale);
+        this.config.defaultCurrency = this.resolveCurrency(provided, this.config.defaultRegion);
 
-        this.log('Starting currency detection from config...');
-        this.log('Config region:', this.config.defaultRegion);
-        this.log('Config locale:', this.config.defaultLocale);
-        this.log('Current currency:', this.config.defaultCurrency);
-
-        // Check if region was explicitly provided in options (not from DEFAULT_CONFIG)
-        if (this.config.defaultRegion && this.config.defaultRegion !== 'US') {
-            const regionCurrency = getCurrencyForRegion(this.config.defaultRegion);
-            this.log('Region currency lookup result:', this.config.defaultRegion, '->', regionCurrency);
-            if (regionCurrency) {
-                detectedCurrency = regionCurrency;
-                this.log('Currency detected from config region:', this.config.defaultRegion, '->', detectedCurrency);
-            }
-        }
-
-        // If no region currency detected, check locale
-        if (!detectedCurrency && this.config.defaultLocale && this.config.defaultLocale !== 'en-US') {
-            detectedCurrency = this.detectCurrencyFromLocale(this.config.defaultLocale);
-            if (detectedCurrency) {
-                this.log('Currency detected from config locale:', this.config.defaultLocale, '->', detectedCurrency);
-            }
-        }
-
-        // If still no currency detected, try browser auto-detection
-        if (!detectedCurrency && this.isBrowser()) {
-            detectedCurrency = this.autoDetectCurrency();
-        }
-
-        if (detectedCurrency) {
-            this.config.defaultCurrency = detectedCurrency;
-            this.log('Currency set to:', detectedCurrency);
-        } else {
-            this.log('No currency detected, keeping default:', this.config.defaultCurrency);
-        }
-
-        this.log('Final currency setting:', this.config.defaultCurrency);
+        this.log('Resolved regional settings:', {
+            locale: this.config.defaultLocale,
+            language: this.config.defaultLanguage,
+            region: this.config.defaultRegion,
+            currency: this.config.defaultCurrency
+        });
     }
+
+    /**
+     * An explicit locale wins. Failing that, an explicit language implies its
+     * own locale, so `config({ defaultLanguage: 'he' })` still yields 'he-IL'.
+     */
+    private resolveLocale(provided: ApxContextOptions): string {
+        if (provided.defaultLocale) {
+            return provided.defaultLocale;
+        }
+        if (provided.defaultLanguage && LANGUAGES[provided.defaultLanguage]) {
+            return LANGUAGES[provided.defaultLanguage].locale;
+        }
+        return this.config.defaultLocale;
+    }
+
+    /** Explicit language, else the one the locale names. */
+    private resolveLanguage(
+        provided: ApxContextOptions,
+        locale: string
+    ): keyof typeof LANGUAGES {
+        if (provided.defaultLanguage && LANGUAGES[provided.defaultLanguage]) {
+            return provided.defaultLanguage;
+        }
+        return getLanguageByLocale(locale)?.key ?? this.config.defaultLanguage;
+    }
+
+    /** Explicit region, else the one the locale names. */
+    private resolveRegion(provided: ApxContextOptions, locale: string): string {
+        if (provided.defaultRegion) {
+            return provided.defaultRegion;
+        }
+        return this.getRegionFromLocale(locale) ?? this.config.defaultRegion;
+    }
+
+    /**
+     * Explicit currency, else the region's currency — and the region itself
+     * came from the locale unless it was overridden. The browser is consulted
+     * only when the region maps to nothing.
+     */
+    private resolveCurrency(provided: ApxContextOptions, region: string): string {
+        if (provided.defaultCurrency) {
+            return provided.defaultCurrency;
+        }
+        return (
+            getCurrencyForRegion(region) ??
+            this.autoDetectCurrency() ??
+            this.config.defaultCurrency
+        );
+    }
+
 
     /**
      * Auto-detect currency from browser locale via navigator.language

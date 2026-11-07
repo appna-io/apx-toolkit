@@ -1,3 +1,5 @@
+import { formatCurrencyIntl, formatNumberIntl } from './intlFormat.js';
+
 /**
  * Format currency amount
  */
@@ -6,15 +8,7 @@ export const formatCurrency = (
     currency: string = 'USD',
     locale: string = 'en-US'
 ): string => {
-    try {
-        return new Intl.NumberFormat(locale, {
-            style: 'currency',
-            currency: currency
-        }).format(amount);
-    } catch (error) {
-    // Fallback formatting
-        return `${currency} ${amount.toFixed(2)}`;
-    }
+    return formatCurrencyIntl(amount, currency, locale);
 };
 
 /**
@@ -64,11 +58,11 @@ export const formatPercentage = (
     locale: string = 'en-US'
 ): string => {
     try {
-        return new Intl.NumberFormat(locale, {
+        return formatNumberIntl(value / 100, locale, {
             style: 'percent',
             minimumFractionDigits: decimals,
             maximumFractionDigits: decimals
-        }).format(value / 100);
+        });
     } catch (error) {
         return `${value.toFixed(decimals)}%`;
     }
@@ -82,11 +76,7 @@ export const formatNumber = (
     locale: string = 'en-US',
     options?: Intl.NumberFormatOptions
 ): string => {
-    try {
-        return new Intl.NumberFormat(locale, options).format(num);
-    } catch (error) {
-        return num.toString();
-    }
+    return formatNumberIntl(num, locale, options);
 };
 
 

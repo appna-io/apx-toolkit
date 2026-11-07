@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+	  "target": "ESNext",
+	  "module": "ESNext",
+	  "moduleResolution": "node",
+	  "noEmit": true,
+	  "allowJs": false,
+	  "removeComments": false,
+	  "resolveJsonModule": true,
+	  "strict": true,
+	  "forceConsistentCasingInFileNames": true,
+	  "esModuleInterop": true,
+	  "skipLibCheck": true,
+	  "lib": ["es2018", "esnext.asynciterable", "dom"],
+	  "allowSyntheticDefaultImports": true
+	},
+	"include": [
+	  "src",
+	  "src/**/*.ts",
+	  "src/**/*.d.ts"
+	],
+	"exclude": ["node_modules", "src/__tests__", "**/*.test.ts", "**/*.spec.ts"]
+  }

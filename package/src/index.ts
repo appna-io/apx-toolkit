@@ -2,9 +2,11 @@
 export { REGEX, type RegexPattern } from './regex/patterns.js';
 
 // Export context system
+export type { default as ApxContext } from './context/index.js';
 export * from './context/index.js';
 
 // Export persister utility
+export { default as Persister } from './persister/index.js';
 export * from './persister/index.js';
 
 // Export constants
@@ -41,6 +43,9 @@ export * from './utils/debounce.js';
 
 // Export credit card utilities
 export * from './utils/creditCard.js';
+
+// Export shared Intl formatting helpers
+export * from './utils/intlFormat.js';
 
 // Export currency utilities
 export * from './utils/currencyUtils.js';
