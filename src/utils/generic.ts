@@ -76,7 +76,7 @@ export const isArray = (value: any): value is any[] => {
 /**
  * Check if value is a function
  */
-export const isFunction = (value: any): value is Function => {
+export const isFunction = (value: any): value is (...args: any[]) => any => {
     return typeof value === 'function';
 };
 

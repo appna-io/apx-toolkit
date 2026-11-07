@@ -42,7 +42,7 @@ const extractVersion = (userAgent: string, browserName: string): string => {
         Firefox: /Firefox\/([\d.]+)/,
         Safari: /Version\/([\d.]+)/,
         Edge: /Edg(?:e|A|iOS)?\/([\d.]+)/,
-        Opera: /(?:OPR|Opera)\/([\d.]+)/,
+        Opera: /(?:OPR|Opera)\/([\d.]+)/
     };
 
     const pattern = patterns[browserName];
@@ -68,7 +68,7 @@ const detectFromUserAgentData = (): BrowserInfo | null => {
         'Google Chrome': 'Chrome',
         'Microsoft Edge': 'Edge',
         'Opera': 'Opera',
-        'Chromium': 'Chrome',
+        'Chromium': 'Chrome'
     };
 
     const browserName = brandMap[brand] || brand || 'unknown';
@@ -76,7 +76,7 @@ const detectFromUserAgentData = (): BrowserInfo | null => {
     return {
         name: browserName,
         version: version || '',
-        isMobile: mobile || false,
+        isMobile: mobile || false
     };
 };
 
@@ -88,7 +88,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'unknown',
             version: '',
-            isMobile: false,
+            isMobile: false
         };
     }
 
@@ -100,7 +100,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'Edge',
             version: extractVersion(userAgent, 'Edge'),
-            isMobile,
+            isMobile
         };
     }
 
@@ -109,7 +109,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'Opera',
             version: extractVersion(userAgent, 'Opera'),
-            isMobile,
+            isMobile
         };
     }
 
@@ -118,7 +118,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'Chrome',
             version: extractVersion(userAgent, 'Chrome'),
-            isMobile,
+            isMobile
         };
     }
 
@@ -127,7 +127,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'Firefox',
             version: extractVersion(userAgent, 'Firefox'),
-            isMobile,
+            isMobile
         };
     }
 
@@ -136,7 +136,7 @@ const detectFromUserAgent = (): BrowserInfo => {
         return {
             name: 'Safari',
             version: extractVersion(userAgent, 'Safari'),
-            isMobile,
+            isMobile
         };
     }
 
@@ -144,7 +144,7 @@ const detectFromUserAgent = (): BrowserInfo => {
     return {
         name: 'unknown',
         version: '',
-        isMobile,
+        isMobile
     };
 };
 

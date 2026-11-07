@@ -108,5 +108,5 @@ export const isValidTextForLanguage = (text: string, language: KeyOf<typeof LANG
     const cleaned = text.normalize('NFC').replace(/\s+/g, '');
     if (!cleaned) return false;
     return lang.regex.test(cleaned);
-  };
+};
   

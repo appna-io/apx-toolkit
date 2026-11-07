@@ -134,28 +134,21 @@ describe('ApxContext', () => {
         });
 
         it('should auto-detect user currency when not provided', () => {
-            // Mock Intl.DateTimeFormat to return a specific locale
-            const mockResolvedOptions = jest.fn().mockReturnValue({ locale: 'de-DE' });
-            const mockDateTimeFormat = jest.fn().mockImplementation(() => ({
-                resolvedOptions: mockResolvedOptions
-            }));
-            
-            const originalDateTimeFormat = global.Intl.DateTimeFormat;
-            global.Intl.DateTimeFormat = mockDateTimeFormat as any;
-            
+            // Detection reads the browser locale (navigator.language); Node's own navigator reports the machine's
+            const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+            Object.defineProperty(globalThis, 'navigator', { value: { language: 'de-DE' }, configurable: true });
+
             try {
-                config({ 
+                config({
                     defaultLanguage: 'en',
                     persist: 'memory'
                     // Note: no defaultCurrency provided
                 });
-                
+
                 expect(getCurrency()).toBe('EUR'); // Should use auto-detected currency from de-DE locale
-                expect(mockDateTimeFormat).toHaveBeenCalled();
-                expect(mockResolvedOptions).toHaveBeenCalled();
             } finally {
-                // Restore original
-                global.Intl.DateTimeFormat = originalDateTimeFormat;
+                if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
+                else delete (globalThis as { navigator?: unknown }).navigator;
             }
         });
 

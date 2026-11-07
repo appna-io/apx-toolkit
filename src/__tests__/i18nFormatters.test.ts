@@ -198,7 +198,7 @@ describe('I18N Formatters', () => {
             const timeResult = formatTimeI18N(2, 'h');
             
             expect(currencyResult).toContain('₪');
-            expect(dateResult).toContain('2025'); // Current year
+            expect(dateResult).toContain(String(new Date().getFullYear()));
             expect(timeResult).toBeDefined();
         });
 
