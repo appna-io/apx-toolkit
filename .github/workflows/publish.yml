@@ -57,21 +57,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      # The library is the workspace in package/; the root is the private playground.
       - name: Bump patch version
-        run: npm version patch --no-git-tag-version
+        run: npm version patch --no-git-tag-version -w @apx-ui/toolkit
 
       - name: Read new version
         id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(node -p "require('./package/package.json').version")" >> "$GITHUB_OUTPUT"
 
       # Packed before the push: what is published is what was built and tested, whatever the rebase below brings in.
       - name: Pack
-        run: npm pack --pack-destination "$RUNNER_TEMP"
+        run: npm pack -w @apx-ui/toolkit --pack-destination "$RUNNER_TEMP"
 
       # main may have moved since checkout: rebase the bump onto it and push again. package-lock.json is git-ignored.
       - name: Commit version bump
         run: |
-          git add package.json
+          git add package/package.json
           git commit -m "chore: release @apx-ui/toolkit v${{ steps.version.outputs.version }} [skip ci]"
           for attempt in 1 2 3; do
             git push && exit 0

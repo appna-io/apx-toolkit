@@ -133,23 +133,32 @@ describe('ApxContext', () => {
             expect(getCurrency()).toBe('EUR');
         });
 
-        it('should auto-detect user currency when not provided', () => {
-            // Detection reads the browser locale (navigator.language); Node's own navigator reports the machine's
+        // Detection reads the browser locale (navigator.language); Node's own navigator reports the machine's
+        const withBrowserLocale = (language: string, run: () => void) => {
             const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
-            Object.defineProperty(globalThis, 'navigator', { value: { language: 'de-DE' }, configurable: true });
-
+            Object.defineProperty(globalThis, 'navigator', { value: { language }, configurable: true });
             try {
-                config({
-                    defaultLanguage: 'en',
-                    persist: 'memory'
-                    // Note: no defaultCurrency provided
-                });
-
-                expect(getCurrency()).toBe('EUR'); // Should use auto-detected currency from de-DE locale
+                run();
             } finally {
                 if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
                 else delete (globalThis as { navigator?: unknown }).navigator;
             }
+        };
+
+        it('should take the currency from the language locale, not the browser', () => {
+            withBrowserLocale('de-DE', () => {
+                config({ defaultLanguage: 'en', persist: 'memory' });
+
+                expect(getCurrency()).toBe('USD'); // 'en' implies en-US, whose region decides
+            });
+        });
+
+        it('should auto-detect the browser currency when the region maps to none', () => {
+            withBrowserLocale('de-DE', () => {
+                config({ defaultRegion: 'ZZ', persist: 'memory' });
+
+                expect(getCurrency()).toBe('EUR');
+            });
         });
 
         it('should use provided currency over auto-detected currency', () => {
