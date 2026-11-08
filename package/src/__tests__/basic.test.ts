@@ -24,6 +24,7 @@ import {
     // Constants
     COUNTRIES,
     LANGUAGES,
+    isValidTextForLanguage,
     SECONDS_IN_MINUTE,
   
     // Regex patterns
@@ -118,6 +119,26 @@ describe('@apx-ui/toolkit', () => {
         test('LANGUAGES should contain language data', () => {
             expect(Object.keys(LANGUAGES).length).toBeGreaterThan(0);
             expect(LANGUAGES.en).toBeDefined();
+        });
+
+        test('LANGUAGES is the full catalogue of 80', () => {
+            expect(Object.keys(LANGUAGES)).toHaveLength(80);
+            expect(LANGUAGES.hu).toEqual({ nativeName: 'Magyar', label: 'Hungarian', locale: 'hu-HU' });
+        });
+
+        test('isValidTextForLanguage checks a language with a regex', () => {
+            expect(isValidTextForLanguage('שלום עולם', 'he')).toBe(true);
+            expect(isValidTextForLanguage('hello', 'he')).toBe(false);
+        });
+
+        test('isValidTextForLanguage passes any text for a language without a regex', () => {
+            expect(isValidTextForLanguage('Jó napot', 'hu')).toBe(true);
+            expect(isValidTextForLanguage('שלום', 'hu')).toBe(true);
+        });
+
+        test('isValidTextForLanguage fails empty text and unknown languages', () => {
+            expect(isValidTextForLanguage('   ', 'hu')).toBe(false);
+            expect(isValidTextForLanguage('hello', 'xx' as keyof typeof LANGUAGES)).toBe(false);
         });
 
         test('SECONDS_IN_MINUTE should be 60', () => {

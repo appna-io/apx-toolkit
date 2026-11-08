@@ -1,17 +1,23 @@
 import { KeyOf } from '../common-types/index.js';
 
 /**
- * Common languages with their codes and names
+ * A language in the catalogue. `regex` is the language's own character range, used by `isValidTextForLanguage`;
+ * a language without one isn't checked.
  */
 export interface ApxLanguageObject {
   label: string;
   nativeName?: string;
   locale: string;
+  regex?: RegExp;
 }
 export type ApxLanguage = Record<KeyOf<typeof LANGUAGES>, ApxLanguageObject>;
 
 export const RTL_LANGUAGES: string[] = ['ar', 'he', 'fa', 'ur'];
 
+/**
+ * The catalogue of languages: label, native name, locale and, for some, a character range. It may hold more than an
+ * app supports; each app keeps its own list of supported codes (AppNa's is `APP_LANGUAGES` in `@appna/sdk`).
+ */
 export const LANGUAGES = {
     en: { nativeName: 'English', label: 'English', locale: 'en-US', regex: /^[A-Za-z0-9]+$/ },
     he: { nativeName: 'עברית', label: 'Hebrew', locale: 'he-IL', regex: /^[\u0590-\u05FF0-9]+$/ },
@@ -34,10 +40,36 @@ export const LANGUAGES = {
     da: { nativeName: 'Dansk', label: 'Danish', locale: 'da-DK', regex: /^[A-Za-zÆØÅæøå0-9]+$/ },
     fi: { nativeName: 'Suomi', label: 'Finnish', locale: 'fi-FI', regex: /^[A-Za-zÅÄÖåäö0-9]+$/ },
     cs: { nativeName: 'Čeština', label: 'Czech', locale: 'cs-CZ', regex: /^[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9]+$/ },
+    hu: { nativeName: 'Magyar', label: 'Hungarian', locale: 'hu-HU' },
     ro: { nativeName: 'Română', label: 'Romanian', locale: 'ro-RO', regex: /^[A-Za-zĂÂÎȘȘȚăâîșșț0-9]+$/ },
     bg: { nativeName: 'Български', label: 'Bulgarian', locale: 'bg-BG', regex: /^[\u0400-\u04FF0-9]+$/ },
-    uk: { nativeName: 'Українська', label: 'Ukrainian', locale: 'uk-UA', regex: /^[\u0400-\u04FFҐґЄєІіЇї0-9]+$/ },
+    hr: { nativeName: 'Hrvatski', label: 'Croatian', locale: 'hr-HR' },
+    sk: { nativeName: 'Slovenčina', label: 'Slovak', locale: 'sk-SK' },
+    sl: { nativeName: 'Slovenščina', label: 'Slovenian', locale: 'sl-SI' },
+    et: { nativeName: 'Eesti', label: 'Estonian', locale: 'et-EE' },
+    lv: { nativeName: 'Latviešu', label: 'Latvian', locale: 'lv-LV' },
+    lt: { nativeName: 'Lietuvių', label: 'Lithuanian', locale: 'lt-LT' },
     el: { nativeName: 'Ελληνικά', label: 'Greek', locale: 'el-GR', regex: /^[\u0370-\u03FF0-9]+$/ },
+    mt: { nativeName: 'Malti', label: 'Maltese', locale: 'mt-MT' },
+    cy: { nativeName: 'Cymraeg', label: 'Welsh', locale: 'cy-GB' },
+    ga: { nativeName: 'Gaeilge', label: 'Irish', locale: 'ga-IE' },
+    is: { nativeName: 'Íslenska', label: 'Icelandic', locale: 'is-IS' },
+    fo: { nativeName: 'Føroyskt', label: 'Faroese', locale: 'fo-FO' },
+    sq: { nativeName: 'Shqip', label: 'Albanian', locale: 'sq-AL' },
+    mk: { nativeName: 'Македонски', label: 'Macedonian', locale: 'mk-MK' },
+    sr: { nativeName: 'Српски', label: 'Serbian', locale: 'sr-RS' },
+    bs: { nativeName: 'Bosanski', label: 'Bosnian', locale: 'bs-BA' },
+    me: { nativeName: 'Crnogorski', label: 'Montenegrin', locale: 'me-ME' },
+    uk: { nativeName: 'Українська', label: 'Ukrainian', locale: 'uk-UA', regex: /^[\u0400-\u04FFҐґЄєІіЇї0-9]+$/ },
+    be: { nativeName: 'Беларуская', label: 'Belarusian', locale: 'be-BY' },
+    kk: { nativeName: 'Қазақша', label: 'Kazakh', locale: 'kk-KZ' },
+    ky: { nativeName: 'Кыргызча', label: 'Kyrgyz', locale: 'ky-KG' },
+    uz: { nativeName: 'Oʻzbekcha', label: 'Uzbek', locale: 'uz-UZ' },
+    tg: { nativeName: 'Тоҷикӣ', label: 'Tajik', locale: 'tg-TJ' },
+    mn: { nativeName: 'Монгол', label: 'Mongolian', locale: 'mn-MN' },
+    ka: { nativeName: 'ქართული', label: 'Georgian', locale: 'ka-GE' },
+    hy: { nativeName: 'Հայերեն', label: 'Armenian', locale: 'hy-AM' },
+    az: { nativeName: 'Azərbaycanca', label: 'Azerbaijani', locale: 'az-AZ' },
     fa: { nativeName: 'فارسی', label: 'Persian', locale: 'fa-IR', regex: /^[\u0600-\u06FF0-9]+$/ },
     ur: { nativeName: 'اردو', label: 'Urdu', locale: 'ur-PK', regex: /^[\u0600-\u06FF0-9]+$/ },
     bn: { nativeName: 'বাংলা', label: 'Bengali', locale: 'bn-BD', regex: /^[\u0980-\u09FF0-9]+$/ },
@@ -47,9 +79,26 @@ export const LANGUAGES = {
     ml: { nativeName: 'മലയാളം', label: 'Malayalam', locale: 'ml-IN', regex: /^[\u0D00-\u0D7F0-9]+$/ },
     gu: { nativeName: 'ગુજરાતી', label: 'Gujarati', locale: 'gu-IN', regex: /^[\u0A80-\u0AFF0-9]+$/ },
     pa: { nativeName: 'ਪੰਜਾਬੀ', label: 'Punjabi', locale: 'pa-IN', regex: /^[\u0A00-\u0A7F0-9]+$/ },
+    or: { nativeName: 'ଓଡ଼ିଆ', label: 'Odia', locale: 'or-IN' },
+    as: { nativeName: 'অসমীয়া', label: 'Assamese', locale: 'as-IN' },
+    ne: { nativeName: 'नेपाली', label: 'Nepali', locale: 'ne-NP' },
     si: { nativeName: 'සිංහල', label: 'Sinhala', locale: 'si-LK', regex: /^[\u0D80-\u0DFF0-9]+$/ },
+    my: { nativeName: 'မြန်မာဘာသာ', label: 'Burmese', locale: 'my-MM' },
+    km: { nativeName: 'ភាសាខ្មែរ', label: 'Khmer', locale: 'km-KH' },
+    lo: { nativeName: 'ລາວ', label: 'Lao', locale: 'lo-LA' },
     th: { nativeName: 'ไทย', label: 'Thai', locale: 'th-TH', regex: /^[\u0E00-\u0E7F0-9]+$/ },
-    vi: { nativeName: 'Tiếng Việt', label: 'Vietnamese', locale: 'vi-VN', regex: /^[A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềể0-9]+$/ }
+    vi: { nativeName: 'Tiếng Việt', label: 'Vietnamese', locale: 'vi-VN', regex: /^[A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềể0-9]+$/ },
+    id: { nativeName: 'Bahasa Indonesia', label: 'Indonesian', locale: 'id-ID' },
+    ms: { nativeName: 'Bahasa Melayu', label: 'Malay', locale: 'ms-MY' },
+    tl: { nativeName: 'Tagalog', label: 'Tagalog', locale: 'tl-PH' },
+    sw: { nativeName: 'Kiswahili', label: 'Swahili', locale: 'sw-KE' },
+    am: { nativeName: 'አማርኛ', label: 'Amharic', locale: 'am-ET' },
+    yo: { nativeName: 'Yorùbá', label: 'Yoruba', locale: 'yo-NG' },
+    ig: { nativeName: 'Igbo', label: 'Igbo', locale: 'ig-NG' },
+    ha: { nativeName: 'Hausa', label: 'Hausa', locale: 'ha-NG' },
+    zu: { nativeName: 'isiZulu', label: 'Zulu', locale: 'zu-ZA' },
+    xh: { nativeName: 'isiXhosa', label: 'Xhosa', locale: 'xh-ZA' },
+    af: { nativeName: 'Afrikaans', label: 'Afrikaans', locale: 'af-ZA' }
 } as const;
   
 
@@ -131,11 +180,15 @@ export const getSupportedLanguageCodes = (): string[] => {
     return Object.keys(LANGUAGES);
 };
 
+/**
+ * Whether `text` (whitespace ignored) is written in the language's own characters. Empty text and unknown languages
+ * fail; a language with no `regex` in the catalogue isn't checked, so any text passes.
+ */
 export const isValidTextForLanguage = (text: string, language: KeyOf<typeof LANGUAGES>): boolean => {
-    const lang = LANGUAGES[language];
-    if (!lang || !lang.regex) return false;
+    const lang: ApxLanguageObject | undefined = LANGUAGES[language];
+    if (!lang) return false;
     const cleaned = text.normalize('NFC').replace(/\s+/g, '');
     if (!cleaned) return false;
-    return lang.regex.test(cleaned);
+    return lang.regex ? lang.regex.test(cleaned) : true;
 };
   

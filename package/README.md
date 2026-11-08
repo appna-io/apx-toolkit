@@ -659,16 +659,21 @@ getCountriesByPhoneCode(phoneCode: string): Country[]
 
 #### Languages
 
-```ts
-LANGUAGES = [
-  { code: 'en', label: 'English', nativeName: 'English' },
-  { code: 'he', label: 'Hebrew', nativeName: 'עברית' },
-  ...
-]
+`LANGUAGES` is the catalogue: 80 languages, keyed by code. It can hold more than an app supports, so an app keeps its
+own list of supported codes and reads labels here. Some entries have a `regex` (the language's own character range);
+`isValidTextForLanguage` doesn't check text for a language without one.
 
-getLanguageByCode(code: string): Language | undefined
-getLanguageByLabel(label: string): Language | undefined
-getSupportedLanguageCodes(): string[]
+```ts
+LANGUAGES = {
+  en: { label: 'English', nativeName: 'English', locale: 'en-US', regex: /^[A-Za-z0-9]+$/ },
+  hu: { label: 'Hungarian', nativeName: 'Magyar', locale: 'hu-HU' },
+  ...
+}
+
+getLanguageByCode(code: string): ApxLanguageObject | undefined
+getLanguageByLabel(label: string): ApxLanguageObject | undefined
+getSupportedLanguageCodes(): string[]   // every code in the catalogue
+isValidTextForLanguage(text: string, code): boolean
 ```
 
 #### Magic Numbers
