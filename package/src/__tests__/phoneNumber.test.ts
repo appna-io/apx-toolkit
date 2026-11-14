@@ -1,4 +1,4 @@
-import { formatPhoneNumber, COUNTRY_CODES } from '../utils/phoneNumber';
+import { formatPhoneNumber, COUNTRY_CODES, whatsAppUrl } from '../utils/phoneNumber';
 
 describe('Phone Number Utilities', () => {
   describe('COUNTRY_CODES', () => {
@@ -176,4 +176,17 @@ describe('Phone Number Utilities', () => {
         });
     });
 });
+});
+
+describe('whatsAppUrl', () => {
+    it('links an international number by its digits, the only form wa.me takes', () => {
+        expect(whatsAppUrl('+972 50-289-2553')).toBe('https://wa.me/972502892553');
+        expect(whatsAppUrl('+12025550123')).toBe('https://wa.me/12025550123');
+    });
+
+    it('is null when there is no number', () => {
+        expect(whatsAppUrl('')).toBeNull();
+        expect(whatsAppUrl(undefined)).toBeNull();
+        expect(whatsAppUrl('n/a')).toBeNull();
+    });
 });

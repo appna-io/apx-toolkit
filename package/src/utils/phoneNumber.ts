@@ -194,6 +194,15 @@ originCountry?: keyof typeof COUNTRY_CODES
     return result;
 }
 
+/**
+ * A WhatsApp chat link for a phone number in international form (E.164, `+972 50…`): `https://wa.me/<digits>`,
+ * which is the only form WhatsApp's link takes. Null when there is no number to link.
+ */
+export function whatsAppUrl(phone: string | undefined | null): string | null {
+    const digits = (phone ?? '').replace(/\D/g, '');
+    return digits ? `https://wa.me/${digits}` : null;
+}
+
 function findLongestCountryCode(digits: string): string {
     const codes = Object.values(COUNTRY_CODES).map(code => code.toString()).sort((a, b) => b.length - a.length);
 
